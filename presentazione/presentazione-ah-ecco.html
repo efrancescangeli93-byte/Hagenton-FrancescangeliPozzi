@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ah, ecco! — presentazione</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+--ink:#1B1B17;--ink2:#48473F;--ink3:#6C6B60;
+--cream:#FFFCF2;--paper:#F6F6F3;
+--giallo:#F7CE46;--giallo-d:#D9A400;--giallo-t:#3D2E00;--giallo-p:#FDF0C4;
+--trap:#F9E4DC;--trap-t:#5B2417;
+--ok:#E6F0DF;--ok-t:#20401F;
+--linea:#E4E0CD;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:Roboto,system-ui,sans-serif;background:var(--cream);color:var(--ink);overflow:hidden;-webkit-font-smoothing:antialiased}
+.slide{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6vh 8vw;text-align:center;opacity:0;visibility:hidden;transform:translateY(12px);transition:opacity .4s ease,transform .45s cubic-bezier(.22,.72,.24,1),visibility 0s .45s}
+.slide.on{opacity:1;visibility:visible;transform:none;transition:opacity .4s ease,transform .45s cubic-bezier(.22,.72,.24,1),visibility 0s}
+.slide.giallo{background:var(--giallo);color:var(--giallo-t)}
+.slide.bianco{background:#FFFFFF}
+.slide.viola{background:#A100FF;color:#FFFFFF}
+.acc{font-size:clamp(42px,7.6vw,104px);font-weight:400;letter-spacing:-.005em;line-height:1;color:#FFFFFF}
+.acct{position:relative}
+.acct i{position:absolute;left:50%;top:-.46em;transform:translateX(-50%);font-style:normal;font-size:.5em;line-height:1;font-weight:400}
+.defin1{font-size:clamp(30px,5.4vw,74px);font-weight:500;line-height:1.14;color:#2E3338;letter-spacing:-.01em}
+.defin2{font-size:clamp(16px,2.5vw,34px);font-weight:400;line-height:1.35;color:#F7CE46;margin-top:clamp(14px,2.6vh,30px);white-space:nowrap}
+.brandmark{position:fixed;top:3.2vh;right:3.4vw;z-index:7;font-size:clamp(16px,1.6vw,24px);color:#A100FF;letter-spacing:-.005em;line-height:1}
+.credit{position:absolute;right:5vw;bottom:7vh;text-align:right;text-transform:uppercase;letter-spacing:.1em;font-size:clamp(11px,1.05vw,15px);color:rgba(255,255,255,.82)}
+.q{font-size:clamp(24px,4.2vw,54px);font-weight:400;line-height:1.4;max-width:20ch}
+.q b{font-weight:500}
+.opp{font-size:.62em;opacity:.7;display:inline-block;padding:.25em 0}
+.mega{font-size:clamp(64px,15vw,190px);font-weight:500;line-height:1}
+.sub{font-size:clamp(16px,2vw,26px);font-weight:400;margin-top:2.4vh;color:var(--giallo-t);opacity:.8}
+.grande{font-size:clamp(34px,6.4vw,82px);font-weight:500;line-height:1.15;max-width:16ch}
+.media{font-size:clamp(20px,2.6vw,34px);font-weight:400;line-height:1.5;max-width:24ch;margin-top:3vh;color:var(--ink2)}
+.chipword{display:inline-block;background:var(--giallo);color:var(--giallo-t);font-size:clamp(30px,6vw,76px);font-weight:500;padding:.28em .6em;border-radius:.28em}
+
+.slots{display:grid;gap:clamp(6px,1.1vh,14px);width:min(760px,88vw);text-align:left}
+.row{display:flex;align-items:center;gap:clamp(12px,1.6vw,22px);padding:clamp(7px,1.1vh,14px) clamp(12px,1.6vw,20px);border-radius:12px;background:transparent;transition:background .2s,opacity .2s}
+.n{width:clamp(26px,2.4vw,34px);height:clamp(26px,2.4vw,34px);flex:none;border-radius:50%;background:var(--giallo-p);color:var(--giallo-t);display:grid;place-items:center;font-size:clamp(13px,1.15vw,16px);font-weight:500}
+.nm{font-size:clamp(16px,1.85vw,26px);font-weight:400}
+.hint{font-size:clamp(12px,1.1vw,15px);color:var(--ink3);margin-left:auto;text-align:right}
+.slots.focus6 .row{opacity:.34}
+.slots.focus6 .row:nth-child(6){opacity:1;background:var(--giallo)}
+.slots.focus6 .row:nth-child(6) .n{background:var(--giallo-t);color:var(--giallo)}
+.slots.focus6 .row:nth-child(6) .nm{font-weight:500}
+.slots.anello .row{opacity:.3}
+.slots.anello .row:nth-child(2),.slots.anello .row:nth-child(7){opacity:1}
+.slots.anello .row:nth-child(2){background:var(--trap)}
+.slots.anello .row:nth-child(2) .n{background:#E8AD97;color:var(--trap-t)}
+.slots.anello .row:nth-child(2) .nm,.slots.anello .row:nth-child(2) .hint{color:var(--trap-t);font-weight:500}
+.slots.anello .row:nth-child(7){background:var(--ok)}
+.slots.anello .row:nth-child(7) .n{background:#A9C79F;color:var(--ok-t)}
+.slots.anello .row:nth-child(7) .nm,.slots.anello .row:nth-child(7) .hint{color:var(--ok-t);font-weight:500}
+.cap{font-size:clamp(14px,1.4vw,20px);color:var(--ink2);margin-top:3.4vh;max-width:34ch;line-height:1.55}
+
+.bolle{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:clamp(10px,1.8vw,26px);width:min(920px,92vw)}
+.b{flex:0 0 auto;min-width:0;overflow:hidden;border-radius:50%;display:grid;place-items:center;font-size:clamp(11px,1.15vw,17px);font-weight:500;text-align:center;padding:0 .5em;line-height:1.2}
+
+.scena{position:relative;width:min(880px,94vw);height:min(56vh,440px);display:grid;place-items:center}
+.scena .c{position:absolute;border-radius:50%;aspect-ratio:1;z-index:1}
+.scena .alone{z-index:0}
+.logo{position:relative;z-index:2;font-size:clamp(46px,9.6vw,134px);font-weight:500;line-height:1;letter-spacing:-.02em}
+.hero .scena{transition:transform .8s cubic-bezier(.22,.72,.24,1)}
+.hero.up .scena{transform:translateY(-13vh) scale(.56)}
+.hero .c{transition:opacity .55s ease}
+.hero.up .c{opacity:0}
+.claimblock{position:absolute;left:0;right:0;top:57%;padding:0 8vw;opacity:0;transform:translateY(20px);transition:opacity .55s .38s ease,transform .55s .38s cubic-bezier(.22,.72,.24,1)}
+.hero.up .claimblock{opacity:1;transform:none}
+.claimtxt{font-size:clamp(19px,2.7vw,36px);font-weight:400;line-height:1.45;max-width:22ch;margin:0 auto}
+.claimsub{font-size:clamp(14px,1.5vw,21px);color:var(--ink3);margin-top:3.2vh}
+@media(prefers-reduced-motion:reduce){.hero .scena,.hero .c,.claimblock{transition:none}}
+.tris{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(22px,3.6vw,54px);width:min(1000px,94vw);text-align:left}
+.tk{height:4px;border-radius:0;margin-bottom:clamp(12px,1.9vh,22px)}
+.tl{font-size:clamp(13px,1.3vw,18px);font-weight:500;margin-bottom:clamp(8px,1.3vh,15px)}
+.tp{font-size:clamp(15px,1.7vw,23px);line-height:1.5;color:var(--ink2)}
+.ico{width:1.15em;height:1.15em;vertical-align:-.22em;margin-left:.14em}
+@media(max-width:840px){.tris{grid-template-columns:1fr;gap:22px;width:min(560px,90vw)}}
+.tris>div{opacity:0;transform:translateY(16px);transition:opacity .45s ease,transform .45s cubic-bezier(.22,.72,.24,1)}
+.slide[data-k="0"] .tris>div:nth-child(1),
+.slide[data-k="1"] .tris>div:nth-child(-n+2),
+.slide[data-k="2"] .tris>div{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.tris>div{transition:none}}
+
+.tre{display:grid;gap:clamp(14px,2.4vh,30px);width:min(720px,90vw);text-align:left}
+.tre div{display:flex;gap:clamp(12px,1.6vw,22px);align-items:baseline}
+.tre span{font-size:clamp(12px,1.1vw,15px);color:var(--ink3);min-width:8ch;letter-spacing:.4px}
+.tre p{font-size:clamp(17px,2vw,27px);line-height:1.45}
+
+.flow{--d:clamp(46px,5.6vw,72px);display:flex;align-items:flex-start;justify-content:center;width:min(920px,94vw)}
+.fstep{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 8px}
+.fstep:not(:first-child)::before{content:"";position:absolute;top:calc(var(--d)/2 - 1px);right:calc(50% + var(--d)/2 + 14px);left:calc(-50% + var(--d)/2 + 14px);height:2px;background:#E4E0CD}
+.fdot{width:var(--d);height:var(--d);border-radius:50%;display:grid;place-items:center;font-size:clamp(17px,1.9vw,26px);font-weight:500;margin-bottom:clamp(16px,2.6vh,30px);position:relative;z-index:1}
+.fverb{font-size:clamp(20px,2.7vw,36px);font-weight:500;line-height:1.15}
+.fobj{font-size:clamp(13px,1.5vw,20px);color:var(--ink2);margin-top:.45em;line-height:1.4}
+@media(max-width:760px){.flow{flex-direction:column;gap:26px}.fstep::before{display:none}}
+.fstep{opacity:0;transform:translateY(14px);transition:opacity .45s ease,transform .45s cubic-bezier(.22,.72,.24,1)}
+#fin[data-k="0"] .fstep:nth-child(1),
+#fin[data-k="1"] .fstep:nth-child(-n+2),
+#fin[data-k="2"] .fstep,
+#fin[data-k="3"] .fstep{opacity:1;transform:none}
+#fin .flow{transition:transform .85s cubic-bezier(.22,.72,.24,1)}
+#fin[data-k="3"] .flow{transform:translate(calc(-44vw + 26%),calc(-42vh + 26%)) scale(.52)}
+.radarbox{position:absolute;right:8vw;bottom:6vh;opacity:0;transform:translateY(22px);transition:opacity .6s .4s ease,transform .6s .4s cubic-bezier(.22,.72,.24,1)}
+.radarbox svg{display:block;height:min(680px,78vh);width:auto;max-width:52vw}
+#fin[data-k="3"] .radarbox{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.fstep,#fin .flow,.radarbox{transition:none}
+ .slide{transition:visibility 0s .01s}.slide.on{transition:visibility 0s;transform:none}}
+
+.corner{position:absolute;left:5vw;top:6vh;width:min(290px,26vw);text-align:left}
+.corner .tk{height:4px;margin-bottom:clamp(8px,1.2vh,12px)}
+.corner .tl{font-size:clamp(12px,1.05vw,15px);margin-bottom:clamp(5px,.8vh,8px)}
+.corner .tp{font-size:clamp(12px,1.15vw,17px);line-height:1.45}
+@media(max-width:980px){.corner{display:none}}
+
+.tecclaim{font-size:clamp(16px,2.1vw,29px);font-weight:400;line-height:1.5;color:var(--ink2);max-width:52ch;margin-top:1.6vh}
+.tecsub{font-size:clamp(15px,1.8vw,24px);color:var(--ink2);line-height:1.5;max-width:44ch;margin:-1vh 0 clamp(22px,3.6vh,42px)}
+.pipe{display:flex;align-items:stretch;justify-content:center;gap:clamp(8px,1.1vw,16px);width:min(1160px,84vw);flex-wrap:wrap}
+.pnode{flex:1 1 200px;min-width:175px;max-width:250px;background:#FFFFFF;border:0.5px solid #E8E6D9;border-radius:13px;padding:clamp(12px,1.8vh,18px) clamp(12px,1.3vw,17px);text-align:left;display:flex;flex-direction:column}
+.pbar{display:flex;gap:2px;margin-bottom:clamp(9px,1.4vh,14px)}
+.pbar i{flex:1;height:4px;display:block}
+.pnode b{font-size:clamp(14px,1.5vw,20px);font-weight:500;line-height:1.25;display:flex;align-items:center}
+.pnode span{font-size:clamp(12px,1.2vw,16px);color:var(--ink2);line-height:1.45;margin-top:.5em}
+.parr{font-style:normal;align-self:center;color:#B6B096;font-size:clamp(15px,1.5vw,20px);flex:none}
+.tecnote{font-size:clamp(12px,1.25vw,17px);color:var(--ink3);line-height:1.55;max-width:64ch;margin-top:clamp(22px,3.4vh,40px)}
+@media(max-width:900px){.parr{display:none}.pipe{gap:12px}}
+
+.pipe5{display:flex;align-items:stretch;justify-content:center;gap:clamp(8px,1vw,14px);width:min(1200px,86vw);flex-wrap:wrap}
+.p5{flex:1 1 180px;min-width:160px;max-width:220px;background:#FFFFFF;border:0.5px solid #E8E6D9;border-radius:13px;padding:clamp(11px,1.6vh,16px) clamp(11px,1.1vw,15px);text-align:left;display:flex;flex-direction:column}
+.p5 em{font-style:normal;font-size:clamp(11px,1.05vw,14px);font-weight:500;color:#D9A400;letter-spacing:.08em;margin-bottom:.55em}
+.p5 b{font-size:clamp(13px,1.35vw,18px);font-weight:500;line-height:1.25;display:flex;align-items:center}
+.p5 span{font-size:clamp(11px,1.05vw,14px);color:var(--ink2);line-height:1.45;margin-top:.5em}
+.p5 i{font-style:italic;color:var(--ink3);font-size:clamp(10.5px,1vw,13px);line-height:1.4;margin-top:.4em}
+.slotstrip{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(4px,.6vw,8px);width:min(1200px,86vw);margin-top:clamp(20px,3.2vh,38px)}
+.ss{display:flex;align-items:center;gap:7px;background:#F4F2E6;border-radius:9px;padding:6px 11px;font-size:clamp(11px,1.05vw,14px);color:#8B8878;white-space:nowrap;transition:background .25s ease,color .25s ease}
+.ss b{width:18px;height:18px;border-radius:9px;background:#E7DFC2;color:#7E7352;font-size:10.5px;font-weight:500;display:grid;place-items:center;flex:none;transition:background .25s ease,color .25s ease}
+.ss.done{background:#FBF7E8;color:#4A473A}
+.ss.done b{background:#F3C536;color:#3D2E00}
+.ss.now{background:#F3C536;color:#3D2E00;font-weight:500}
+.ss.now b{background:#3D2E00;color:#F3C536}
+@media(prefers-reduced-motion:reduce){.ss,.ss b{transition:none}}
+#demoslide .slotstrip{margin-top:0;margin-bottom:clamp(14px,2.2vh,24px);width:min(1160px,84vw)}
+
+.backbtn{position:absolute;left:5vw;top:6vh;border:1px solid #C2B08A;background:transparent;color:#7A5A00;border-radius:20px;padding:9px 18px;font-size:clamp(13px,1.15vw,15px);font-weight:500;font-family:inherit;cursor:pointer;letter-spacing:.01em}
+.backbtn:hover{background:#FBF7E8}
+
+.dtit{font-size:clamp(20px,2.7vw,36px);font-weight:500;margin-bottom:clamp(14px,2.4vh,26px)}
+.demo{width:min(880px,93vw);background:#FFFEF8;border:1px solid #EFE6C9;border-radius:18px;padding:clamp(18px,3vh,30px) clamp(20px,3vw,34px);text-align:left}
+.dhead{display:flex;align-items:center;gap:13px;margin-bottom:clamp(14px,2.4vh,24px)}
+.dchip{background:#F3C536;color:#3D2E00;font-size:13px;font-weight:500;padding:5px 12px;border-radius:9px;flex:none}
+.dtitle{font-size:clamp(15px,1.7vw,22px);font-weight:500;flex:1}
+.dprog{display:flex;gap:3px;flex:none}
+.dprog i{width:14px;height:4px;border-radius:2px;background:#E4E0CD;display:block}
+.dprog i.on{background:#D9A400}
+.dlab{font-size:12px;letter-spacing:.4px;color:#6C6B60;margin-bottom:9px;display:flex;align-items:center;gap:10px}
+.dnum{width:22px;height:22px;border-radius:11px;background:#F3C536;color:#3D2E00;font-size:12px;font-weight:500;display:grid;place-items:center;flex:none}
+.dnum.tr{background:#E8AD97;color:#4A1B0C}
+.dtext{font-size:clamp(15px,1.85vw,24px);line-height:1.55}
+.dbox{border-radius:12px;padding:13px 16px;font-size:clamp(15px,1.85vw,24px);line-height:1.5}
+.dlim{margin-top:10px;border-left:3px solid #E0DCC6;padding-left:12px;font-size:clamp(13px,1.35vw,17px);line-height:1.5;color:#55544A}
+.dbody{min-height:clamp(148px,25vh,215px)}
+.dfoot{margin-top:clamp(14px,2.2vh,22px);display:flex;align-items:center;gap:14px}
+.dbtn{background:#D9A400;color:#2E2100;border-radius:20px;padding:11px 22px;font-size:15px;font-weight:500;border:none;cursor:pointer;font-family:inherit}
+.dbtn.ghost{background:transparent;border:1px solid #C2B08A;color:#7A5A00}
+.dstep{font-size:12.5px;color:#6C6B60}
+.dopt{display:block;width:100%;text-align:left;padding:11px 14px;border:1px solid #DFD9C4;border-radius:11px;background:#fff;font-size:clamp(14px,1.5vw,19px);margin-bottom:8px;cursor:pointer;font-family:inherit;line-height:1.4}
+.dopt:hover{background:#FFFBEE}
+.dopt.ko{background:#F9E4DC;border-color:#E8AD97;color:#5B2417}
+.dopt.ok{background:#E6F0DF;border-color:#A9C79F;color:#20401F}
+.dfb{margin-top:11px;font-size:clamp(13px,1.4vw,17px);line-height:1.5;border-radius:11px;padding:12px 15px}
+.dfb.ko{background:#F9E4DC;color:#5B2417}
+.dfb.ok{background:#E6F0DF;color:#20401F}
+
+.mark{position:fixed;top:3.2vh;left:3.4vw;display:none;align-items:center;gap:9px;font-size:clamp(13px,1.2vw,17px);font-weight:500;color:var(--ink2);z-index:5}
+.mark.on{display:flex}
+.mark i{width:.62em;height:.62em;border-radius:50%;background:var(--giallo-d);display:block}
+.bar{position:fixed;left:0;bottom:0;height:3px;background:var(--giallo-d);width:0;transition:width .25s;z-index:6}
+.num{position:fixed;right:3vw;bottom:2.6vh;font-size:clamp(14px,1.25vw,18px);font-weight:500;color:var(--ink3);z-index:6;letter-spacing:.5px}
+.num s{text-decoration:none;opacity:.45;font-weight:400}
+.help{position:fixed;left:3vw;bottom:2.8vh;font-size:12px;color:var(--ink3);z-index:6}
+
+@media print{
+ body{overflow:visible;height:auto}
+ .slide{position:relative;display:flex!important;height:100vh;page-break-after:always;inset:auto;opacity:1!important;visibility:visible!important;transform:none!important}
+ .bar,.num,.help,.mark{display:none!important}
+ .hero .scena{transform:translateY(-6vh) scale(.62)}
+ .claimblock{opacity:1;transform:none}
+ .tris>div{opacity:1!important;transform:none!important}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <clipPath id="spClip"><path d="M50 0C50 27.6 72.4 50 100 50C72.4 50 50 72.4 50 100C50 72.4 27.6 50 0 50C27.6 50 50 27.6 50 0Z"/></clipPath>
+    <radialGradient id="spR"><stop offset="0" stop-color="#EA4335"/><stop offset=".4" stop-color="#EA4335"/><stop offset=".85" stop-color="#EA4335" stop-opacity="0"/></radialGradient>
+    <radialGradient id="spY"><stop offset="0" stop-color="#FBBC05"/><stop offset=".4" stop-color="#FBBC05"/><stop offset=".85" stop-color="#FBBC05" stop-opacity="0"/></radialGradient>
+    <radialGradient id="spG"><stop offset="0" stop-color="#34A853"/><stop offset=".4" stop-color="#34A853"/><stop offset=".85" stop-color="#34A853" stop-opacity="0"/></radialGradient>
+    <radialGradient id="spB"><stop offset="0" stop-color="#4285F4"/><stop offset=".4" stop-color="#4285F4"/><stop offset=".85" stop-color="#4285F4" stop-opacity="0"/></radialGradient>
+    <symbol id="sparkle" viewBox="0 0 100 100">
+      <g clip-path="url(#spClip)">
+        <rect width="100" height="100" fill="#4285F4"/>
+        <circle cx="50" cy="0" r="72" fill="url(#spR)"/>
+        <circle cx="0" cy="50" r="72" fill="url(#spY)"/>
+        <circle cx="50" cy="100" r="72" fill="url(#spG)"/>
+        <circle cx="100" cy="50" r="72" fill="url(#spB)"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<section class="slide viola on">
+  <span class="acc">accen<span class="acct">t<i>&gt;</i></span>ure</span>
+  <p class="credit">by Francescangeli Emanuele e Pozzi Luigi</p>
+</section>
+
+<section class="slide bianco">
+  <p class="defin1">Microlearning inverso.</p>
+  <p class="defin2">Prima il caso reale, poi la definizione.</p>
+</section>
+
+<section class="slide giallo">
+  <p class="q">Prestito <b>A</b>: tasso 6%, TAEG 6,4%.<br><span class="opp">oppure</span><br>Prestito <b>B</b>: tasso 5%, TAEG 8,1%.<br><br>Quale conviene?</p>
+</section>
+
+<section class="slide">
+  <p class="grande">Falsa familiarità</p>
+  <p class="media">L'utilizzo di parole che usiamo ogni giorno senza possederle.</p>
+</section>
+
+<section class="slide hero" data-steps="2">
+  <div class="scena">
+    <div class="c alone" style="width:clamp(270px,46vw,560px);background:#FDF0C4;left:50%;top:50%;transform:translate(-50%,-50%)"></div>
+    <div class="c" style="width:clamp(74px,12vw,152px);left:1%;top:6%;background:#F7CE46"></div>
+    <div class="c" style="width:clamp(58px,9.4vw,118px);right:3%;top:0;background:#7FD6A6"></div>
+    <div class="c" style="width:clamp(48px,7.8vw,98px);left:11%;bottom:1%;background:#8CBEF2"></div>
+    <div class="c" style="width:clamp(62px,10vw,126px);right:9%;bottom:5%;background:#F2A28C"></div>
+    <div class="c" style="width:clamp(38px,5.8vw,74px);right:-1%;top:45%;background:#C2B3F2"></div>
+    <div class="c" style="width:clamp(34px,5.4vw,68px);left:-1%;top:54%;background:#A8D97F"></div>
+    <p class="logo">Ah, ecco!</p>
+  </div>
+  <div class="claimblock">
+    <p class="claimtxt">L'assistente per le parole che usi ogni giorno.</p>
+    <p class="claimsub">Credevo di saperle. Ah, ecco.</p>
+  </div>
+</section>
+
+<section class="slide" data-steps="3">
+  <div class="tris">
+    <div>
+      <div class="tk" style="background:#FBE49A"></div>
+      <p class="tl">Quando serve</p>
+      <p class="tp">Davanti a un contratto, a una notizia, a un modulo: una parola che credi di conoscere.</p>
+    </div>
+    <div>
+      <div class="tk" style="background:#F3C536"></div>
+      <p class="tl">Come funziona</p>
+      <p class="tp">Cerchi la parola, segui l'esempio fornito o lascia che l'app ne generi<svg class="ico" aria-hidden="true"><use href="#sparkle"/></svg> uno ad hoc.</p>
+    </div>
+    <div>
+      <div class="tk" style="background:#D9A400"></div>
+      <p class="tl">Cosa ti dà</p>
+
+      <p class="tp">Il concetto lo capisci con la definizione, lo fissi con un esempio reale.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="demoslide">
+  <button class="backbtn" id="backdemo">← Indietro</button>
+  <p class="dtit">L'esempio che ti chiarisce</p>
+  <div class="slotstrip">
+    <span class="ss"><b>1</b>Il fatto</span>
+    <span class="ss"><b>2</b>La trappola</span>
+    <span class="ss"><b>3</b>La spiegazione</span>
+    <span class="ss"><b>4</b>L'analogia</span>
+    <span class="ss"><b>5</b>I numeri</span>
+    <span class="ss"><b>6</b>Il termine tecnico</span>
+    <span class="ss"><b>7</b>Mettilo alla prova</span>
+    <span class="ss"><b>8</b>Nella vita pratica</span>
+  </div>
+  <div class="demo">
+    <div class="dhead">
+      <span class="dchip">Inflazione</span>
+      <span class="dtitle">I 3.000 € fermi sul conto corrente</span>
+    </div>
+    <div class="dbody" id="dbody"></div>
+    <div class="dfoot" id="dfoot"></div>
+  </div>
+</section>
+
+<section class="slide" id="fin" data-steps="4">
+  <div class="flow">
+    <div class="fstep">
+      <span class="fdot" style="background:#FBE49A;color:#4A3A00">1</span>
+      <span class="fverb">Acquisisci</span>
+      <span class="fobj">le conoscenze</span>
+    </div>
+    <div class="fstep">
+      <span class="fdot" style="background:#F3C536;color:#3D2E00">2</span>
+      <span class="fverb">Traccia</span>
+      <span class="fobj">le tue risposte</span>
+    </div>
+    <div class="fstep">
+      <span class="fdot" style="background:#D9A400;color:#2E2100">3</span>
+      <span class="fverb">Verifica</span>
+      <span class="fobj">il tuo punteggio</span>
+    </div>
+  </div>
+  <div class="radarbox">
+  <svg viewBox="0 0 320 300" role="img" aria-label="Radar dei punteggi: Medicina 88, Finanza 78, Economia 62, Ambiente 55, Tecnologia 45, Diritto 30">
+    <polygon points="156,130 173.3,140 173.3,160 156,170 138.7,160 138.7,140" fill="none" stroke="#E0DCC6"/>
+    <polygon points="156,110 190.6,130 190.6,170 156,190 121.4,170 121.4,130" fill="none" stroke="#E0DCC6"/>
+    <polygon points="156,90 208,120 208,180 156,210 104,180 104,120" fill="none" stroke="#E0DCC6"/>
+    <polygon points="156,70 225.3,110 225.3,190 156,230 86.7,190 86.7,110" fill="none" stroke="#E0DCC6"/>
+    <polygon points="156,50 242.6,100 242.6,200 156,250 69.4,200 69.4,100" fill="none" stroke="#CFC9AE"/>
+    <line x1="156" y1="150" x2="156" y2="50" stroke="#E0DCC6"/>
+    <line x1="156" y1="150" x2="242.6" y2="100" stroke="#E0DCC6"/>
+    <line x1="156" y1="150" x2="242.6" y2="200" stroke="#E0DCC6"/>
+    <line x1="156" y1="150" x2="156" y2="250" stroke="#E0DCC6"/>
+    <line x1="156" y1="150" x2="69.4" y2="200" stroke="#E0DCC6"/>
+    <line x1="156" y1="150" x2="69.4" y2="100" stroke="#E0DCC6"/>
+    <polygon points="156,72 209.7,119 195,172.5 156,238 130,165 108.4,122.5" fill="#6B6753" fill-opacity=".10" stroke="#6B6753" stroke-width="2" stroke-linejoin="round"/>
+    <circle cx="156" cy="72" r="6.5" fill="#F7CE46" stroke="#FFFCF2" stroke-width="1.6"/>
+    <circle cx="209.7" cy="119" r="6.5" fill="#7FD6A6" stroke="#FFFCF2" stroke-width="1.6"/>
+    <circle cx="195" cy="172.5" r="6.5" fill="#8CBEF2" stroke="#FFFCF2" stroke-width="1.6"/>
+    <circle cx="156" cy="238" r="6.5" fill="#F2A28C" stroke="#FFFCF2" stroke-width="1.6"/>
+    <circle cx="130" cy="165" r="6.5" fill="#C2B3F2" stroke="#FFFCF2" stroke-width="1.6"/>
+    <circle cx="108.4" cy="122.5" r="6.5" fill="#A8D97F" stroke="#FFFCF2" stroke-width="1.6"/>
+    <text x="156" y="38" text-anchor="middle" font-size="13" fill="#1B1B17">Finanza</text>
+    <text x="249" y="96" text-anchor="start" font-size="13" fill="#1B1B17">Economia</text>
+    <text x="249" y="206" text-anchor="start" font-size="13" fill="#1B1B17">Tecnologia</text>
+    <text x="156" y="272" text-anchor="middle" font-size="13" fill="#1B1B17">Medicina</text>
+    <text x="63" y="206" text-anchor="end" font-size="13" fill="#1B1B17">Diritto</text>
+    <text x="63" y="96" text-anchor="end" font-size="13" fill="#1B1B17">Ambiente</text>
+  </svg>
+  </div>
+</section>
+
+<section class="slide" id="tec">
+  <p class="dtit">Cosa è realmente</p>
+  <p class="tecclaim">Un sistema ibrido che combina simulazione deterministica e intelligenza artificiale generativa per creare esperienze di apprendimento personalizzate in tempo reale.</p>
+</section>
+
+<section class="slide" id="pipe5s">
+  <p class="dtit">Pipeline AI — generazione caso</p>
+  <p class="tecsub">Dal keyword al caso didattico in cinque passi.</p>
+  <div class="pipe5">
+    <div class="p5">
+      <em>01</em><b>Input utente</b>
+      <span>L'utente digita una parola qualsiasi.</span>
+      <i>«spread», «IRPEF», «vaccino»…</i>
+    </div>
+    <div class="p5">
+      <em>02</em><b>Agente generatore<svg class="ico" aria-hidden="true"><use href="#sparkle"/></svg></b>
+      <span>Prompt di sistema più keyword: il modello produce un JSON con gli otto slot, in italiano.</span>
+    </div>
+    <div class="p5">
+      <em>03</em><b>Validazione backend</b>
+      <span>Controllo del macrotema fra i sei ammessi, pulizia del markdown, nuovo tentativo se il parsing fallisce.</span>
+    </div>
+    <div class="p5">
+      <em>04</em><b>Risposta al frontend</b>
+      <span>Il caso entra nello stato dell'applicazione e l'utente viene portato dentro il percorso.</span>
+    </div>
+    <div class="p5">
+      <em>05</em><b>Reveal progressivo</b>
+      <span>Slot 1-6 sbloccati uno alla volta, poi il check, poi lo slot 8. Il punteggio finisce nel radar.</span>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="futuro" data-steps="3">
+  <p class="dtit">Sviluppi futuri</p>
+  <p class="tecsub">Dove può andare, e cosa lo renderebbe più affidabile.</p>
+  <div class="tris">
+    <div>
+      <div class="tk" style="background:#F3C536"></div>
+      <p class="tl">Agente orchestratore</p>
+      <p class="tp">Un router che smista la richiesta a contesti verticali, uno per dominio, ciascuno con i suoi guardrail: su finanza o medicina un modello specializzato sbaglia meno di uno generalista.</p>
+    </div>
+    <div>
+      <div class="tk" style="background:#E3AE14"></div>
+      <p class="tl">Ripasso mirato</p>
+      <p class="tp">Il radar sa già dove sei scoperto. Il passo successivo è riproporti quei concetti nel tempo, invece di aspettare che ti ricapitino addosso.</p>
+    </div>
+    <div>
+      <div class="tk" style="background:#D9A400"></div>
+      <p class="tl">Concetti collegati</p>
+      <p class="tp">Prerequisiti espliciti tra i concetti, per dire cosa conviene capire prima: il rendimento reale dopo l'inflazione, non al suo posto.</p>
+    </div>
+  </div>
+</section>
+
+<div class="brandmark" id="brandmark">accen<span class="acct">t<i>&gt;</i></span>ure</div>
+<div class="bar" id="bar"></div>
+<div class="num" id="num"></div>
+<div class="help" id="help">← → per navigare</div>
+
+<script>
+const S=[...document.querySelectorAll('.slide')];
+const STOPS=[];S.forEach((s,i)=>{for(let k=0;k<(+s.dataset.steps||1);k++)STOPS.push({i,k})});
+let p=0;
+const bar=document.getElementById('bar'),num=document.getElementById('num'),
+      help=document.getElementById('help'),brandmark=document.getElementById('brandmark');
+function go(n){
+  p=Math.max(0,Math.min(STOPS.length-1,n));
+  const{i,k}=STOPS[p];
+  S.forEach((s,j)=>{s.classList.toggle('on',j===i);if(j!==i)s.classList.remove('up')});
+  S[i].classList.toggle('up',k>0);
+  S[i].dataset.k=k;
+  bar.style.width=((p+1)/STOPS.length*100)+'%';
+  num.innerHTML=(i+1)+'<s> / '+S.length+'</s>';
+  const giallo=S[i].classList.contains('giallo'),viola=S[i].classList.contains('viola');
+  const cr=viola?'rgba(255,255,255,.7)':(giallo?'#3D2E00':'#6C6B60');
+  num.style.color=cr;
+  help.style.color=cr;
+  bar.style.background=viola?'#FFFFFF':(giallo?'#3D2E00':'#D9A400');
+  brandmark.style.display=viola?'none':'block';
+  brandmark.style.color=giallo?'#3D2E00':'#A100FF';
+  help.style.opacity=p===0?'1':'.5';
+  if(i!==lastI){lastI=i;if(S[i].id==='demoslide'&&window.demoReset)demoReset()}
+}
+let lastI=-1;
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();go(p+1)}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(p-1)}
+  else if(e.key==='Home')go(0);
+  else if(e.key==='End')go(STOPS.length-1);
+});
+document.addEventListener('click',e=>{if(e.target.closest('.demo'))return;go(e.clientX>innerWidth/2?p+1:p-1)});
+let x0=null;
+document.addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});
+document.addEventListener('touchend',e=>{if(x0===null)return;const d=e.changedTouches[0].clientX-x0;if(Math.abs(d)>50)go(d<0?p+1:p-1);x0=null},{passive:true});
+go(0);
+</script>
+
+<script>
+const CASO=[
+ {l:'Il fatto',t:'Ho lasciato 3.000 € sul conto corrente per un anno. Non li ho toccati: pensavo di tenerli al sicuro, fuori da rischi.'},
+ {l:'La trappola',t:'«I soldi sono ancora lì, non ho perso niente.»',trap:true},
+ {l:'La spiegazione',t:'Il saldo in cifre non cambia, ma quello che puoi comprare con quei soldi cambia ogni anno. L’inflazione non erode i numeri sul conto: erode il loro potere d’acquisto.'},
+ {l:'L’analogia',t:'Un buono regalo che rimane nel cassetto: la plastica è ancora lì, ma i prezzi del negozio sono saliti. Quello che compravi con 100 € l’anno scorso ora costa 104 €.',lim:'Il buono scade e il valore diventa zero di colpo; l’inflazione è graduale e non azzera mai il saldo. Ma l’effetto cumulato nel tempo è altrettanto reale.'},
+ {l:'I numeri',t:'3.000 € con inflazione al 4% annuo: il potere d’acquisto equivale a 2.885 € dell’anno precedente. Perdi 115 € di capacità di spesa senza aver toccato il conto.',num:true},
+ {l:'Il termine tecnico',t:'Inflazione.',def:'Aumento generalizzato e persistente del livello dei prezzi nel tempo. Si misura con indici come l’ISTAT (CPI): un’inflazione al 4% significa che un paniere di beni costa il 4% in più rispetto all’anno prima.'},
+ {l:'Mettilo alla prova',q:'Inflazione al 4% annuo. Conto corrente al 0% di rendimento, oppure strumento che rende il 3%. Quale scelta preserva meglio il potere d’acquisto?',
+  o:[{t:'Il conto corrente: i soldi sono ancora lì, non ho perso niente',ok:false},{t:'Lo strumento al 3%, anche se non copre del tutto l’inflazione',ok:true},{t:'Sono equivalenti: quello che conta è non perdere il capitale',ok:false}],
+  why:'Con lo strumento al 3% perdi solo l’1% di potere d’acquisto invece del 4%. Tenere i soldi fermi al 0% significa cedere l’intero 4% ogni anno.',
+  ko:'L’errore è pensare che, se la cifra sul conto non cambia, non hai perso nulla. Ma con gli stessi soldi ogni anno compri un po’ meno: 100 € oggi fanno la spesa che l’anno prossimo ne costerà 104. Fermarli al 0% è la perdita più grande, non la più sicura.'},
+ {l:'Nella vita pratica',t:'Cerca il tasso di inflazione attuale sul sito ISTAT e confrontalo con il rendimento del tuo conto o strumento. La differenza è il guadagno o la perdita reale.'}
+];
+let dn=0,drisposto=false;
+const dbody=document.getElementById('dbody'),dfoot=document.getElementById('dfoot');
+const dchips=[...document.querySelectorAll('#demoslide .ss')];
+function demoReset(){dn=0;drisposto=false;drender()}
+function drender(){
+  dchips.forEach((el,j)=>{el.classList.toggle('now',j===dn);el.classList.toggle('done',j<dn)});
+  const s=CASO[dn],n=dn+1;
+  let h='<p class="dlab"><span class="dnum'+(s.trap?' tr':'')+'">'+n+'</span>'+s.l+'</p>';
+  if(s.q){
+    h+='<p class="dtext" style="margin-bottom:14px">'+s.q+'</p>';
+    h+='<div id="dopts">'+s.o.map((o,j)=>'<button class="dopt" data-j="'+j+'">'+o.t+'</button>').join('')+'</div><div id="dfb"></div>';
+  }else if(s.trap){
+    h+='<p class="dbox" style="background:#F9E4DC;color:#5B2417">'+s.t+'</p>';
+  }else if(s.num){
+    h+='<p class="dbox" style="background:#F6F0DC">'+s.t+'</p>';
+  }else if(s.def){
+    h+='<div class="dbox" style="background:#F3C536;color:#3D2E00"><p style="font-weight:500;margin-bottom:6px">'+s.t+'</p><p style="font-size:.7em;line-height:1.5">'+s.def+'</p></div>';
+  }else{
+    h+='<p class="dtext">'+s.t+'</p>'+(s.lim?'<p class="dlim">'+s.lim+'</p>':'');
+  }
+  dbody.innerHTML=h;
+  const prev=dn>0?'<button class="dbtn ghost" id="dprev">← Precedente</button>':'';
+  if(s.q&&!drisposto){
+    dfoot.innerHTML=prev+'<span class="dstep">Scegli una risposta</span>';
+    dbody.querySelectorAll('.dopt').forEach(b=>b.onclick=()=>dcheck(+b.dataset.j,b));
+  }else if(dn===CASO.length-1){
+    dfoot.innerHTML=prev+'<span class="dstep">8 di 8 · concetto chiuso</span>';
+  }else{
+    dfoot.innerHTML=prev+'<button class="dbtn" id="dnext">Prosegui</button><span class="dstep">'+n+' di 8</span>';
+    document.getElementById('dnext').onclick=()=>{dn++;drisposto=false;drender()};
+  }
+  dback();
+}
+function dback(){const b=document.getElementById('dprev');if(b)b.onclick=()=>{if(dn>0){dn--;drisposto=false;drender()}}}
+function dcheck(j,btn){
+  const s=CASO[dn];
+  if(s.o[j].ok){
+    drisposto=true;btn.classList.add('ok');
+    dbody.querySelectorAll('.dopt').forEach(b=>b.onclick=null);
+    document.getElementById('dfb').innerHTML='<div class="dfb ok"><b style="font-weight:500">Giusto.</b> '+s.why+'</div>';
+    dfoot.innerHTML='<button class="dbtn ghost" id="dprev">← Precedente</button><button class="dbtn" id="dnext">Prosegui</button><span class="dstep">7 di 8</span>';
+    document.getElementById('dnext').onclick=()=>{dn++;drisposto=false;drender()};
+    dback();
+  }else{
+    btn.classList.add('ko');btn.onclick=null;
+    document.getElementById('dfb').innerHTML='<div class="dfb ko"><b style="font-weight:500">Non ci siamo.</b> '+s.ko+' Riprova.</div>';
+  }
+}
+document.querySelector('.demo').addEventListener('click',e=>e.stopPropagation());
+document.getElementById('backdemo').addEventListener('click',e=>{e.stopPropagation();go(p-1)});
+drender();
+</script>
+</body>
+</html>
