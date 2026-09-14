@@ -23,15 +23,20 @@ public class AgentRunner {
 
     private static final String SEP = "\n\n===== INPUT UTENTE =====\n";
 
-    /** Esegue un agente che risponde in JSON. Tollera fence ```json e testo attorno al JSON. */
+    /** Esegue un agente che risponde in JSON. Tollera fence ```json e testo attorno al JSON.
+     *  Riprova una volta in caso di output non valido (errori transitori del modello). */
     public JsonNode runJson(String agent, String input) {
-        String raw = llm.completa(prompts.load(agent) + SEP + input);
-        String json = extractJson(raw);
-        try {
-            return mapper.readTree(json);
-        } catch (Exception e) {
-            throw new RuntimeException("Output non JSON dall'agente '" + agent + "': " + raw, e);
+        String prompt = prompts.load(agent) + SEP + input;
+        RuntimeException ultimo = null;
+        for (int tentativo = 0; tentativo < 2; tentativo++) {
+            String raw = llm.completa(prompt);
+            try {
+                return mapper.readTree(extractJson(raw));
+            } catch (Exception e) {
+                ultimo = new RuntimeException("Output non JSON dall'agente '" + agent + "': " + raw, e);
+            }
         }
+        throw ultimo;
     }
 
     /** Esegue un agente che risponde in testo semplice (es. Narratore). */

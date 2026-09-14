@@ -36,7 +36,8 @@ public class GeminiProvider implements LlmProvider {
         }
         String url = BASE + model + ":generateContent?key=" + apiKey;
         Map<String, Object> body = Map.of(
-                "contents", List.of(Map.of("parts", List.of(Map.of("text", prompt))))
+                "contents", List.of(Map.of("parts", List.of(Map.of("text", prompt)))),
+                "generationConfig", Map.of("responseMimeType", "application/json")
         );
         String resp = http.post()
                 .uri(url)

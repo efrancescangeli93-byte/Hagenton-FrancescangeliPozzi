@@ -47,8 +47,9 @@ public class GeneraCasoController {
         try {
             caso = runner.runJson("generatore", parola);
         } catch (Exception e) {
-            log.warn("Generatore non disponibile, uso il caso di fallback. ({})", e.getMessage());
-            return ResponseEntity.ok(fallback());
+            log.warn("Generatore fallito per «{}»: {}", parola, e.getMessage());
+            return ResponseEntity.status(503).body(errore(
+                    "Non sono riuscito a generare il caso per «" + parola + "». Riprova tra un momento."));
         }
 
         String macrotema = caso.path("macrotema").asText("").trim().toLowerCase();
