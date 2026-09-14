@@ -113,13 +113,17 @@ img { max-width: 100%; display: block; }
 }
 
 .bolla-cluster-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 24px 32px;
+  position: relative;
   width: 100%;
-  padding: 16px 0;
+}
+
+.bolla-pos {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.bolla-pos:hover {
+  z-index: 10;
 }
 
 @keyframes fluttua {

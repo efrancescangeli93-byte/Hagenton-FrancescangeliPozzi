@@ -86,6 +86,29 @@ export default function Tema() {
     };
   });
 
+  const bolleGenerati = generatiTema.map(c => {
+    const nome = c.slot6Termine || c.titolo;
+    let colore: string;
+    let testoColore: string;
+    if (macrotemaId === 'finanza') {
+      colore = FINANZA_TONI[simpleHash(nome) % 8];
+      testoColore = '#3D2E00';
+    } else {
+      const { bg, testo } = hslInterpolate(tema.colore, 8, simpleHash(nome) % 8);
+      colore = bg;
+      testoColore = testo;
+    }
+    return {
+      id: c.id,
+      label: nome,
+      colore,
+      testoColore,
+      onClick: () => navigate(`/caso/${c.id}`),
+    };
+  });
+
+  const bolleTutte = [...bolle, ...bolleGenerati];
+
   async function genera() {
     const q = parola.trim();
     if (!q || loading) return;
@@ -142,7 +165,7 @@ export default function Tema() {
         </div>
       )}
 
-      <BolleCluster bolle={bolle} tutteUguali />
+      <BolleCluster bolle={bolleTutte} tutteUguali />
 
       {generatiTema.length > 0 && (
         <div style={{ marginTop: 32 }}>
