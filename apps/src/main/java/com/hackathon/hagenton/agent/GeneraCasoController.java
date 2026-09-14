@@ -44,6 +44,7 @@ public class GeneraCasoController {
         try {
             return mapper.readTree("""
                 {
+                  "macrotema": "finanza",
                   "concetto": "fondo_emergenza",
                   "titolo": "La lavatrice che si rompe a fine mese",
                   "fatto": "Ho 200 euro sul conto e mancano dieci giorni allo stipendio. Stamattina la lavatrice si e' rotta: ripararla costa 300 euro.",

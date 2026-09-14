@@ -31,6 +31,7 @@ export type Caso = {
   slot7Perche: string;
   slot8CosaFarne: string;
   concettoCollegatoId?: string;
+  macrotemaId?: string;
   generato: boolean;
 };
 

@@ -15,6 +15,7 @@ export async function generaCaso(parola: string): Promise<Caso> {
     id: `gen-${Date.now()}`,
     titolo: j.titolo || 'Caso generato',
     concettoId: j.concetto || 'generato',
+    macrotemaId: j.macrotema || undefined,
     tagSecondario: 'generato con AI',
     slot1FattoVissuto: j.fatto || '',
     slot2Trappola: j.trappola || '',

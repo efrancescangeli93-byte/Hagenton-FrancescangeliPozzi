@@ -58,8 +58,9 @@ function TintaWrapper({ children }: { children: React.ReactNode }) {
     const caso = tuttiCasi.find(c => c.id === casoId);
     if (caso) {
       const concetto = concetti.find(c => c.id === caso.concettoId);
-      if (concetto) {
-        const tema = macrotemi.find(m => m.id === concetto.macrotemaId);
+      const mtId = concetto?.macrotemaId ?? caso.macrotemaId;
+      if (mtId) {
+        const tema = macrotemi.find(m => m.id === mtId);
         tinta = tema?.tinta ?? 'neutro';
       }
     }

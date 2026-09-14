@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { concetti } from '../data/concetti';
 import { macrotemi } from '../data/macrotemi';
 import { useApp } from '../store/AppContext';
-import type { Caso } from '../types';
+import { generaCaso } from '../api';
 
 let setOpenGlobal: ((v: boolean) => void) | null = null;
 
@@ -14,6 +14,7 @@ export function apriRicerca() {
 export default function RicercaDialog() {
   const [aperto, setAperto] = useState(false);
   const [query, setQuery] = useState('');
+  const [generando, setGenerando] = useState(false);
   const { dispatch } = useApp();
   const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -92,42 +93,21 @@ export default function RicercaDialog() {
     chiudi();
   }
 
-  function genera() {
-    if (!query.trim()) return;
-    const tsId = Date.now();
-    const id = `generato-${tsId}`;
-
-    const concettoTrovato = risultati[0];
-    const concettoId = concettoTrovato?.id ?? query.toLowerCase().replace(/\s+/g, '-');
-
-    const caso: Caso = {
-      id,
-      titolo: `Caso su "${query}"`,
-      concettoId,
-      tagSecondario: 'Generato',
-      slot1FattoVissuto: `Slot 1 — il fatto vissuto su "${query}": da compilare.`,
-      slot2Trappola: `Slot 2 — il ragionamento intuitivo su "${query}": da compilare.`,
-      slot3Spiegazione: `Slot 3 — la spiegazione di "${query}": da compilare.`,
-      slot4Analogia: `Slot 4 — l'analogia per "${query}": da compilare.`,
-      slot4Limite: `Slot 4 — il limite dell'analogia: da compilare.`,
-      slot5Numeri: `Slot 5 — i numeri per "${query}": da compilare.`,
-      slot6Termine: `${query} — termine tecnico.`,
-      slot6Definizione: `Slot 6 — la definizione formale di "${query}": da compilare.`,
-      slot7Domanda: `Slot 7 — domanda di trasferimento su "${query}": da compilare.`,
-      slot7Opzioni: [
-        { testo: 'Opzione A (corretta): da compilare', corretta: true },
-        { testo: 'Opzione B: da compilare', corretta: false },
-        { testo: 'Opzione C: da compilare', corretta: false },
-      ],
-      slot7Perche: `Slot 7 — spiegazione della risposta corretta: da compilare.`,
-      slot8CosaFarne: `Slot 8 — cosa guardare per "${query}": da compilare.`,
-      generato: true,
-    };
-
-    dispatch({ type: 'AGGIUNGI_CASO', payload: caso });
-    dispatch({ type: 'SNACKBAR', payload: 'Caso generato' });
-    navigate(`/caso/${id}`);
-    chiudi();
+  async function genera() {
+    const q = query.trim();
+    if (!q || generando) return;
+    setGenerando(true);
+    try {
+      const caso = await generaCaso(q); // Gemini identifica l'ambito e crea il caso
+      dispatch({ type: 'AGGIUNGI_CASO', payload: caso });
+      dispatch({ type: 'SNACKBAR', payload: 'Caso generato' });
+      navigate(`/caso/${caso.id}`);
+      chiudi();
+    } catch {
+      dispatch({ type: 'SNACKBAR', payload: 'Generazione non riuscita, riprova' });
+    } finally {
+      setGenerando(false);
+    }
   }
 
   if (!aperto) return null;
@@ -183,9 +163,9 @@ export default function RicercaDialog() {
         {query.trim().length > 0 && (
           <>
             <div className="ricerca-divider" />
-            <button className="ricerca-genera" onClick={genera}>
+            <button className="ricerca-genera" onClick={genera} disabled={generando}>
               <span className="material-symbols-outlined" aria-hidden="true" style={{ fontSize: 18 }}>auto_awesome</span>
-              Genera un caso su «{query}»
+              {generando ? 'Genero il caso...' : `Genera un caso su «${query}»`}
             </button>
           </>
         )}
