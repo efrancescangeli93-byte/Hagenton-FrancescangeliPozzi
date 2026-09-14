@@ -3,4 +3,7 @@ target/
 *.class
 .idea/
 *.iml
-.claude/
+
+# Claude Code: ignora i settaggi locali, ma versiona gli agenti di sviluppo
+.claude/*
+!.claude/agents/
