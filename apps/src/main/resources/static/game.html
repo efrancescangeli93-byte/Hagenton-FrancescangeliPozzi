@@ -3,20 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fine Mese · motore</title>
+<title>Fine Mese</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: system-ui, Segoe UI, Roboto, sans-serif; margin: 0; background: #0f1117; color: #e6e6e6; padding: 24px; }
   h1 { margin: 0 0 4px; } h1 .gt { color: #A100FF; }
   .sub { color: #8b93a7; margin-bottom: 16px; }
-  .controls { background: #161a23; border: 1px solid #262b36; border-radius: 12px; padding: 16px 18px; margin-bottom: 16px; }
+  .top { display: flex; gap: 18px; align-items: stretch; flex-wrap: wrap; }
+  .score { background: #161a23; border: 1px solid #262b36; border-radius: 14px; padding: 18px 24px; text-align: center; min-width: 200px; }
+  .score .num { font-size: 52px; font-weight: 800; line-height: 1; }
+  .score .lab { color: #8b93a7; font-size: 13px; margin-top: 6px; }
+  .controls { flex: 1; background: #161a23; border: 1px solid #262b36; border-radius: 14px; padding: 16px 18px; min-width: 320px; }
   .controls .row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
   .controls label { color: #8b93a7; font-size: 14px; }
-  input[type=range] { width: 260px; accent-color: #A100FF; }
+  input[type=range] { width: 240px; accent-color: #A100FF; }
   .val { font-weight: 700; font-size: 18px; min-width: 70px; }
   .choice button { padding: 8px 14px; border-radius: 8px; border: 1px solid #2b3140; background: #0f1117; color: #e6e6e6; cursor: pointer; font-size: 14px; }
   .choice button.active { background: #A100FF; border-color: #A100FF; color: #fff; font-weight: 600; }
-  .banner { padding: 12px 16px; border-radius: 10px; margin: 12px 0; font-weight: 600; }
+  .banner { padding: 12px 16px; border-radius: 10px; margin: 14px 0; font-weight: 600; }
   .rosso { background: rgba(255,64,64,.15); border: 1px solid #ff4040; color: #ff8a8a; }
   .ok { background: rgba(64,200,120,.12); border: 1px solid #40c878; color: #7fe0a6; }
   .salva { background: rgba(161,0,255,.15); border: 1px solid #A100FF; color: #d19bff; }
@@ -32,21 +36,28 @@
 </style>
 </head>
 <body>
-  <h1>Fine Mese <span class="gt">&gt;</span> <span style="font-size:16px;color:#8b93a7">motore + scelte</span></h1>
+  <h1>Fine Mese <span class="gt">&gt;</span></h1>
   <div class="sub" id="apertura"></div>
 
-  <div class="controls">
-    <div class="row">
-      <label>Cuscinetto messo da parte:</label>
-      <input type="range" id="cusc" min="0" max="500" step="50" value="0">
-      <span class="val" id="cuscVal">€0</span>
+  <div class="top">
+    <div class="score">
+      <div class="num" id="scoreNum">–</div>
+      <div class="lab">Resilience Score / 100</div>
+      <div class="lab" id="autonomia"></div>
     </div>
-    <div class="row" style="margin-top:12px;">
-      <label>Quando arriva l'imprevisto:</label>
-      <span class="choice">
-        <button data-s="PAGA_DAL_CONTO" class="active">Paga dal conto</button>
-        <button data-s="USA_CUSCINETTO">Usa il cuscinetto</button>
-      </span>
+    <div class="controls">
+      <div class="row">
+        <label>Cuscinetto messo da parte:</label>
+        <input type="range" id="cusc" min="0" max="1000" step="100" value="0">
+        <span class="val" id="cuscVal">€0</span>
+      </div>
+      <div class="row" style="margin-top:12px;">
+        <label>Quando arriva l'imprevisto:</label>
+        <span class="choice">
+          <button data-s="PAGA_DAL_CONTO" class="active">Paga dal conto</button>
+          <button data-s="USA_CUSCINETTO">Usa il cuscinetto</button>
+        </span>
+      </div>
     </div>
   </div>
 
@@ -72,10 +83,15 @@ async function load() {
 
   document.getElementById('apertura').textContent = d.messaggioApertura || '';
 
+  const sc = document.getElementById('scoreNum');
+  sc.textContent = d.resilienceScore;
+  sc.style.color = d.resilienceScore >= 70 ? '#7fe0a6' : (d.resilienceScore >= 40 ? '#ffc15c' : '#ff8a8a');
+  document.getElementById('autonomia').textContent = `${d.mesiAutonomia.toFixed(1)} mesi di autonomia (regola generale: ~3)`;
+
   const banner = document.getElementById('banner');
   if (d.salvatoDalCuscinetto) {
     banner.className = 'banner salva';
-    banner.textContent = `🛡️ Il cuscinetto ti ha salvato dal rosso! Hai usato ${eur(d.cuscinettoUsato)} del cuscinetto invece di finire sotto zero.`;
+    banner.textContent = `🛡️ Il cuscinetto ti ha salvato dal rosso! Hai usato ${eur(d.cuscinettoUsato)} invece di finire sotto zero.`;
   } else if (d.andatoInRosso) {
     banner.className = 'banner rosso';
     banner.textContent = `⚠️ Sei finito in rosso al giorno ${d.giornoRosso}. Saldo minimo: ${eur(d.saldoMinimo)}.`;
@@ -96,22 +112,33 @@ async function load() {
 
 function drawChart(mov) {
   const svg = document.getElementById('chart');
-  const W = 1000, H = 300, pad = 30;
+  const W = 1000, H = 300, pad = 34;
+  const maxDay = Math.max(...mov.map(m => m.giorno), 30);
+  const mesi = Math.ceil(maxDay / 30);
+  const totDays = mesi * 30;
   const saldi = mov.map(m => m.saldoDopo);
   const max = Math.max(...saldi, 0), min = Math.min(...saldi, 0);
   const range = (max - min) || 1;
-  const x = i => pad + (i * (W - 2 * pad)) / Math.max(mov.length - 1, 1);
+  const x = day => pad + ((day - 1) * (W - 2 * pad)) / (totDays - 1);
   const y = v => pad + (max - v) * (H - 2 * pad) / range;
 
   let els = '';
+  // divisori dei mesi
+  for (let m = 1; m <= mesi; m++) {
+    const dx = x((m - 1) * 30 + 1);
+    els += `<line x1="${dx}" y1="6" x2="${dx}" y2="${H-6}" stroke="#262b36" stroke-width="1"/>`;
+    els += `<text x="${dx+6}" y="20" fill="#8b93a7" font-size="12">Mese ${m}</text>`;
+  }
+  // linea zero
   const yZero = y(0);
   els += `<line x1="${pad}" y1="${yZero}" x2="${W-pad}" y2="${yZero}" stroke="#ff4040" stroke-dasharray="4 4" stroke-width="1"/>`;
   els += `<text x="${pad}" y="${yZero-6}" fill="#ff6b6b" font-size="12">0</text>`;
-  const pts = mov.map((m, i) => `${x(i)},${y(m.saldoDopo)}`).join(' ');
+  // polilinea saldo (per giorno)
+  const pts = mov.map(m => `${x(m.giorno)},${y(m.saldoDopo)}`).join(' ');
   els += `<polyline points="${pts}" fill="none" stroke="#A100FF" stroke-width="2.5"/>`;
-  mov.forEach((m, i) => {
+  mov.forEach(m => {
     const col = m.saldoDopo < 0 ? '#ff4040' : '#A100FF';
-    els += `<circle cx="${x(i)}" cy="${y(m.saldoDopo)}" r="3.5" fill="${col}"><title>g${m.giorno} ${m.etichetta}: ${eur(m.saldoDopo)}</title></circle>`;
+    els += `<circle cx="${x(m.giorno)}" cy="${y(m.saldoDopo)}" r="3.5" fill="${col}"><title>g${m.giorno} ${m.etichetta}: ${eur(m.saldoDopo)}</title></circle>`;
   });
   svg.innerHTML = els;
 }

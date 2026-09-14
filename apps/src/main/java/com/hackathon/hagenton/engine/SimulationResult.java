@@ -11,6 +11,9 @@ public record SimulationResult(
         int cuscinettoIniziale,
         int cuscinettoFinale,
         int cuscinettoUsato,
-        boolean salvatoDalCuscinetto, // senza cuscinetto saresti andato in rosso, con esso no
+        boolean salvatoDalCuscinetto,
+        int resilienceScore,        // 0-100
+        double mesiAutonomia,       // cuscinetto rimasto / spesa fissa mensile
+        int spesaFissaMensile,
         String messaggioApertura
 ) {}

@@ -32,12 +32,43 @@ public class SimulationEngine {
         RunOutcome real = run(s, cuscinettoIniziale, decisioni);
         RunOutcome senzaCuscinetto = run(s, 0, decisioni);
         boolean salvato = senzaCuscinetto.andatoInRosso() && !real.andatoInRosso();
+
+        int spesaFissa = spesaFissaMensile(s);
+        double mesiAutonomia = spesaFissa > 0 ? (double) real.cuscinettoFinale() / spesaFissa : 0.0;
+        int score = calcolaResilienceScore(real, spesaFissa);
+
         return new SimulationResult(
                 real.movimenti(), real.saldoFinale(), real.saldoMinimo(),
                 real.andatoInRosso(), real.giornoRosso(),
                 cuscinettoIniziale, real.cuscinettoFinale(), real.cuscinettoUsato(),
-                salvato, s.messaggioApertura()
+                salvato, score, mesiAutonomia, spesaFissa, s.messaggioApertura()
         );
+    }
+
+    private int spesaFissaMensile(Scenario s) {
+        int tot = 0;
+        for (CostoFisso c : s.costiFissi()) tot += c.importo();
+        return tot;
+    }
+
+    /**
+     * Resilience Score 0-100, trasparente:
+     * - 50 punti: non sei mai finito in rosso
+     * - fino a 30 punti: mesi di autonomia del cuscinetto (benchmark: 3 mesi)
+     * - fino a 20 punti: margine (saldo minimo rispetto a un mese di spese)
+     */
+    private int calcolaResilienceScore(RunOutcome r, int spesaFissa) {
+        int punti = 0;
+        if (!r.andatoInRosso()) punti += 50;
+        if (spesaFissa > 0) {
+            double mesi = (double) r.cuscinettoFinale() / spesaFissa;
+            punti += (int) Math.round(Math.min(mesi / 3.0, 1.0) * 30);
+            if (r.saldoMinimo() > 0) {
+                double margine = Math.min((double) r.saldoMinimo() / spesaFissa, 1.0);
+                punti += (int) Math.round(margine * 20);
+            }
+        }
+        return Math.max(0, Math.min(100, punti));
     }
 
     private RunOutcome run(Scenario s, int cuscinettoIniziale, List<Decisione> decisioni) {
