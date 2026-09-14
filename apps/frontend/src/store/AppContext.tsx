@@ -1,6 +1,5 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useReducer } from 'react';
 import type { Caso, Risultato } from '../types';
-import { risultatiSeed } from '../data/risultatiSeed';
 
 type State = {
   risultati: Risultato[];
@@ -33,36 +32,19 @@ function reducer(state: State, action: Action): State {
   }
 }
 
-const LS_KEY = 'ahEccoState';
-
-function caricaDaLS(): Partial<State> {
-  try {
-    return JSON.parse(localStorage.getItem(LS_KEY) || '{}');
-  } catch {
-    return {};
-  }
-}
-
 export const AppContext = createContext<{ state: State; dispatch: React.Dispatch<Action> }>(null!);
 
+/**
+ * Stato in memoria: ogni avvio dell'app parte da ZERO (un "utente" = un run).
+ * I progressi si costruiscono solo con i casi completati durante il run.
+ * (La profilazione persistente e' un'evoluzione futura.)
+ */
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const saved = caricaDaLS();
   const [state, dispatch] = useReducer(reducer, {
-    risultati: saved.risultati ?? risultatiSeed,
-    casiGenerati: saved.casiGenerati ?? [],
+    risultati: [],
+    casiGenerati: [],
     snackbar: null,
   });
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(
-        LS_KEY,
-        JSON.stringify({ risultati: state.risultati, casiGenerati: state.casiGenerati })
-      );
-    } catch {
-      // ignore storage errors
-    }
-  }, [state.risultati, state.casiGenerati]);
 
   return (
     <AppContext.Provider value={{ state, dispatch }}>
