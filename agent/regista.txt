@@ -28,7 +28,11 @@ REGOLE
 - Linguaggio semplice, adatto a chi ha poca dimestichezza con la finanza.
 
 OUTPUT
-Rispondi SOLO con JSON valido, senza testo prima o dopo, in questo formato:
+IMPORTANTE: la tua risposta deve essere ESCLUSIVAMENTE il JSON.
+Niente Markdown, niente titoli, niente intestazioni, niente emoji, niente testo esplicativo
+prima o dopo. Il PRIMO carattere della risposta deve essere { e l'ULTIMO deve essere }.
+
+Formato:
 {
   "concetto": "<uno dei concetti ammessi>",
   "persona": { "nome": "...", "stipendio": 0, "giorno_stipendio": 0 },

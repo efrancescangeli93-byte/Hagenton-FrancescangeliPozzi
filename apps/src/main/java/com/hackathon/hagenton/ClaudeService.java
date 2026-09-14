@@ -15,6 +15,10 @@ import java.util.concurrent.TimeUnit;
 /**
  * Chiama Claude tramite la CLI in modalità headless ("claude -p").
  * Usa la sottoscrizione con cui sei loggato in Claude Code: nessuna API key.
+ *
+ * Nota importante: NON si passano prompt lunghi/complessi come argomenti da riga
+ * di comando (su Windows ProcessBuilder rovina virgolette e parentesi). Tutto il
+ * testo viaggia su STDIN.
  */
 @Service
 public class ClaudeService {
@@ -32,15 +36,9 @@ public class ClaudeService {
 
     public record Result(String reply, String sessionId) {}
 
+    /** Chat con memoria opzionale (session) e system prompt semplice. Usato dalla chat demo. */
     public Result ask(String prompt, String systemPrompt, String sessionId) {
-        List<String> cmd = new ArrayList<>();
-        cmd.add(claudeExecutable);
-        cmd.add("-p");
-        cmd.add("--output-format");
-        cmd.add("json");
-        cmd.add("--model");
-        cmd.add(defaultModel);
-        // Il system prompt e' fissato all'inizio della sessione; su --resume non serve.
+        List<String> cmd = baseCmd();
         if (sessionId != null && !sessionId.isBlank()) {
             cmd.add("--resume");
             cmd.add(sessionId);
@@ -48,16 +46,38 @@ public class ClaudeService {
             cmd.add("--system-prompt");
             cmd.add(systemPrompt);
         }
+        JsonNode node = esegui(cmd, prompt);
+        return new Result(node.path("result").asText(""), node.path("session_id").asText(null));
+    }
 
+    /**
+     * Esecuzione headless "pura": tutto il testo (istruzioni + input) va su stdin,
+     * niente system prompt come argomento. E' il modo robusto per gli agenti.
+     */
+    public String completa(String stdinPrompt) {
+        JsonNode node = esegui(baseCmd(), stdinPrompt);
+        return node.path("result").asText("");
+    }
+
+    private List<String> baseCmd() {
+        List<String> cmd = new ArrayList<>();
+        cmd.add(claudeExecutable);
+        cmd.add("-p");
+        cmd.add("--output-format");
+        cmd.add("json");
+        cmd.add("--model");
+        cmd.add(defaultModel);
+        return cmd;
+    }
+
+    private JsonNode esegui(List<String> cmd, String stdinPrompt) {
         try {
             Process process = new ProcessBuilder(cmd).start();
 
-            // Scrive il prompt su stdin (evita limiti/escaping degli argomenti).
             try (OutputStream stdin = process.getOutputStream()) {
-                stdin.write(prompt.getBytes(StandardCharsets.UTF_8));
+                stdin.write(stdinPrompt.getBytes(StandardCharsets.UTF_8));
             }
 
-            // Legge stdout e stderr in parallelo per non bloccare le pipe.
             CompletableFuture<String> out = readStream(process.getInputStream());
             CompletableFuture<String> err = readStream(process.getErrorStream());
 
@@ -73,11 +93,7 @@ public class ClaudeService {
             if (process.exitValue() != 0) {
                 throw new RuntimeException("Errore dalla CLI di Claude: " + stderr);
             }
-
-            JsonNode node = mapper.readTree(stdout);
-            String reply = node.path("result").asText("");
-            String returnedSession = node.path("session_id").asText(null);
-            return new Result(reply, returnedSession);
+            return mapper.readTree(stdout);
 
         } catch (RuntimeException e) {
             throw e;
