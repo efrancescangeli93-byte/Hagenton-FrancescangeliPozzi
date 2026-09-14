@@ -4,6 +4,5 @@ target/
 .idea/
 *.iml
 
-# Claude Code: ignora i settaggi locali, ma versiona gli agenti di sviluppo
-.claude/*
-!.claude/agents/
+# Claude Code: cartella di config locale, fuori dalla struttura del progetto
+.claude/
