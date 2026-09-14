@@ -48,7 +48,7 @@ function hslInterpolate(coloreBase: string, n: number, i: number): { bg: string;
 export default function Tema() {
   const { macrotemaId } = useParams<{ macrotemaId: string }>();
   const navigate = useNavigate();
-  const { dispatch } = useApp();
+  const { state, dispatch } = useApp();
 
   const [parola, setParola] = useState('');
   const [loading, setLoading] = useState(false);
@@ -60,6 +60,7 @@ export default function Tema() {
   }
 
   const concettiTema = concetti.filter(c => c.macrotemaId === macrotemaId);
+  const generatiTema = state.casiGenerati.filter(c => c.macrotemaId === macrotemaId);
 
   const bolle = concettiTema.map(c => {
     let colore: string;
@@ -142,6 +143,25 @@ export default function Tema() {
       )}
 
       <BolleCluster bolle={bolle} tutteUguali />
+
+      {generatiTema.length > 0 && (
+        <div style={{ marginTop: 32 }}>
+          <h2 style={{ fontSize: 16, fontWeight: 500, marginBottom: 12 }}>Casi generati</h2>
+          {generatiTema.map(c => (
+            <div
+              key={c.id}
+              className="card"
+              style={{ marginBottom: 10, cursor: 'pointer' }}
+              onClick={() => navigate(`/caso/${c.id}`)}
+            >
+              <div style={{ fontSize: 15, fontWeight: 500 }}>{c.titolo}</div>
+              {c.slot6Termine && (
+                <div style={{ fontSize: 13, color: '#6C6B60', marginTop: 2 }}>{c.slot6Termine}</div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

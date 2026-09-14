@@ -14,8 +14,8 @@ export default function Progressi() {
   const punteggiPerTema: Record<string, number> = {};
   macrotemi.forEach(tema => {
     const casiTema = [...casi, ...state.casiGenerati].filter(c => {
-      const concetto = concetti.find(x => x.id === c.concettoId);
-      return concetto?.macrotemaId === tema.id;
+      const mt = concetti.find(x => x.id === c.concettoId)?.macrotemaId ?? c.macrotemaId;
+      return mt === tema.id;
     });
     if (casiTema.length === 0) {
       punteggiPerTema[tema.id] = 0;

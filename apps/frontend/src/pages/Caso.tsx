@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { casi as casiStatici } from '../data/casi';
 import { concetti } from '../data/concetti';
@@ -55,6 +55,16 @@ export default function CasoPagina() {
     setRiletturaAttiva(false);
   }, [casoId]);
 
+  // Mescola le opzioni una volta per caso (la corretta non e' piu' sempre la prima).
+  const opzioni = useMemo(() => {
+    const a = [...(caso?.slot7Opzioni ?? [])];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }, [caso?.id]);
+
   if (!caso) {
     return <div style={{ padding: 24 }}>Caso non trovato.</div>;
   }
@@ -76,7 +86,7 @@ export default function CasoPagina() {
       return;
     }
     setErroreQuiz('');
-    const opzione = caso!.slot7Opzioni[rispostaSelezionata];
+    const opzione = opzioni[rispostaSelezionata];
     if (opzione.corretta) {
       setFeedbackCorretto(true);
       setFeedbackSbagliato(false);
@@ -215,7 +225,7 @@ export default function CasoPagina() {
               <div className="slot-label">{SLOT_LABELS[7]}</div>
               <div className="slot-testo" style={{ marginBottom: 16 }}>{caso.slot7Domanda}</div>
 
-              {caso.slot7Opzioni.map((op, i) => {
+              {opzioni.map((op, i) => {
                 let opClass = 'quiz-opzione';
                 if (rispostaSelezionata === i) opClass += ' selezionata';
                 if (feedbackSbagliato && rispostaSelezionata === i && !op.corretta) opClass += ' errata';
