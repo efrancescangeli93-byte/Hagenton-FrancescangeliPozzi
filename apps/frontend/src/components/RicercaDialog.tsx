@@ -103,8 +103,8 @@ export default function RicercaDialog() {
       dispatch({ type: 'SNACKBAR', payload: 'Caso generato' });
       navigate(`/caso/${caso.id}`);
       chiudi();
-    } catch {
-      dispatch({ type: 'SNACKBAR', payload: 'Generazione non riuscita, riprova' });
+    } catch (e) {
+      dispatch({ type: 'SNACKBAR', payload: (e as Error).message || 'Generazione non riuscita' });
     } finally {
       setGenerando(false);
     }

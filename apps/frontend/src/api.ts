@@ -9,7 +9,14 @@ export async function generaCaso(parola: string): Promise<Caso> {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ parola }),
   });
-  if (!r.ok) throw new Error('Generazione non riuscita');
+  if (!r.ok) {
+    let msg = 'Generazione non riuscita';
+    try {
+      const e = await r.json();
+      if (e && e.error) msg = e.error;
+    } catch { /* corpo non JSON */ }
+    throw new Error(msg);
+  }
   const j = await r.json();
   return {
     id: `gen-${Date.now()}`,

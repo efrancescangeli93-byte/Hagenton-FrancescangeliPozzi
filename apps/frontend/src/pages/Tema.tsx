@@ -94,8 +94,8 @@ export default function Tema() {
       const caso = await generaCaso(q);
       dispatch({ type: 'AGGIUNGI_CASO', payload: caso });
       navigate(`/caso/${caso.id}`);
-    } catch {
-      setErrore('Non sono riuscito a generare il caso. Riprova tra un momento.');
+    } catch (e) {
+      setErrore((e as Error).message || 'Non sono riuscito a generare il caso. Riprova.');
     } finally {
       setLoading(false);
     }

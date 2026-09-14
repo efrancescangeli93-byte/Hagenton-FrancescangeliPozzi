@@ -2,12 +2,16 @@ package com.hackathon.hagenton.agent;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Set;
 
 /**
  * Genera un caso didattico completo (8 slot) a partire da una parola chiave,
@@ -29,15 +33,37 @@ public class GeneraCasoController {
 
     public record ParolaReq(String parola) {}
 
+    private static final Set<String> AMBITI =
+            Set.of("finanza", "economia", "tecnologia", "medicina", "diritto", "ambiente");
+
     @PostMapping("/genera-caso")
-    public JsonNode genera(@RequestBody ParolaReq req) {
+    public ResponseEntity<JsonNode> genera(@RequestBody ParolaReq req) {
         String parola = req.parola() == null ? "" : req.parola().trim();
+        if (parola.isBlank()) {
+            return ResponseEntity.unprocessableEntity().body(errore("Scrivi una parola per generare un caso."));
+        }
+
+        JsonNode caso;
         try {
-            return runner.runJson("generatore", parola.isBlank() ? "un concetto di finanza personale di base" : parola);
+            caso = runner.runJson("generatore", parola);
         } catch (Exception e) {
             log.warn("Generatore non disponibile, uso il caso di fallback. ({})", e.getMessage());
-            return fallback();
+            return ResponseEntity.ok(fallback());
         }
+
+        String macrotema = caso.path("macrotema").asText("").trim().toLowerCase();
+        if (!AMBITI.contains(macrotema)) {
+            return ResponseEntity.unprocessableEntity().body(errore(
+                    "«" + parola + "» non rientra negli argomenti disponibili "
+                            + "(finanza, economia, tecnologia, medicina, diritto, ambiente)."));
+        }
+        return ResponseEntity.ok(caso);
+    }
+
+    private JsonNode errore(String messaggio) {
+        ObjectNode n = mapper.createObjectNode();
+        n.put("error", messaggio);
+        return n;
     }
 
     private JsonNode fallback() {
