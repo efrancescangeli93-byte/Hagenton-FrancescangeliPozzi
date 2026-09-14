@@ -26,7 +26,7 @@ public class GeminiProvider implements LlmProvider {
     @Value("${gemini.api-key:}")
     private String apiKey;
 
-    @Value("${gemini.model:gemini-2.0-flash}")
+    @Value("${gemini.model:gemini-3.6-flash}")
     private String model;
 
     @Override
@@ -45,8 +45,14 @@ public class GeminiProvider implements LlmProvider {
                 .retrieve()
                 .body(String.class);
         try {
-            JsonNode n = mapper.readTree(resp);
-            return n.path("candidates").path(0).path("content").path("parts").path(0).path("text").asText("");
+            JsonNode parts = mapper.readTree(resp).path("candidates").path(0).path("content").path("parts");
+            for (JsonNode p : parts) {
+                String t = p.path("text").asText("");
+                if (!t.isBlank()) return t;
+            }
+            throw new RuntimeException("Gemini non ha restituito testo: " + resp);
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Risposta Gemini non valida: " + resp, e);
         }
