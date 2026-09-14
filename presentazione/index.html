@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pitch · Hackathon AI · Accenture</title>
+<style>
+  :root {
+    --acn-purple: #A100FF;
+    --acn-purple-2: #7500C0;
+    --bg: #000000;
+    --fg: #ffffff;
+    --muted: #b0b0bd;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+    background: var(--bg); color: var(--fg); overflow: hidden;
+  }
+  #deck { height: 100vh; width: 100vw; position: relative; }
+  .slide {
+    position: absolute; inset: 0; display: none;
+    flex-direction: column; justify-content: center;
+    padding: 8vh 10vw; opacity: 0; transition: opacity .35s ease;
+  }
+  .slide.active { display: flex; opacity: 1; }
+  h1 { font-size: 4.2vw; line-height: 1.05; font-weight: 700; letter-spacing: -1px; }
+  h2 {
+    font-size: 2.6vw; font-weight: 700; margin-bottom: 3vh;
+    border-left: 6px solid var(--acn-purple); padding-left: 20px;
+  }
+  p, li { font-size: 1.5vw; line-height: 1.6; color: #e8e8ee; }
+  ul { margin-left: 1.2em; margin-top: 1vh; }
+  li { margin-bottom: 1.4vh; }
+  .accent { color: var(--acn-purple); }
+  .gt { color: var(--acn-purple); font-weight: 700; }
+  .subtitle { color: var(--muted); font-size: 1.6vw; margin-top: 2vh; }
+  .tag {
+    display: inline-block; background: linear-gradient(90deg, var(--acn-purple), var(--acn-purple-2));
+    color: #fff; font-size: 1vw; font-weight: 600; letter-spacing: 1px;
+    padding: 6px 16px; border-radius: 40px; margin-bottom: 3vh; text-transform: uppercase;
+  }
+  .cols { display: flex; gap: 5vw; }
+  .cols > div { flex: 1; }
+  .arch {
+    display: flex; align-items: center; gap: 1.2vw; flex-wrap: wrap;
+    font-size: 1.4vw; margin-top: 2vh;
+  }
+  .box {
+    border: 2px solid var(--acn-purple); border-radius: 12px;
+    padding: 18px 24px; background: rgba(161,0,255,.08); font-weight: 600;
+  }
+  .box small { display: block; color: var(--muted); font-weight: 400; font-size: .95vw; margin-top: 4px; }
+  /* brand */
+  .brand { position: fixed; top: 4vh; left: 10vw; font-weight: 700; font-size: 1.3vw; letter-spacing: -.5px; }
+  .brand .gt { font-size: 1.6vw; }
+  .footer { position: fixed; bottom: 3.5vh; left: 10vw; color: var(--muted); font-size: .95vw; }
+  .counter { position: fixed; bottom: 3.5vh; right: 10vw; color: var(--muted); font-size: .95vw; }
+  .progress { position: fixed; top: 0; left: 0; height: 5px; background: var(--acn-purple); transition: width .35s ease; }
+  .hint { position: fixed; bottom: 3.5vh; left: 50%; transform: translateX(-50%); color: #555; font-size: .85vw; }
+  .todo { color: var(--acn-purple); font-style: italic; }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="brand">accenture<span class="gt">&gt;</span></div>
+
+<div id="deck">
+
+  <!-- 1. COVER -->
+  <section class="slide active">
+    <div class="tag">Hackathon AI</div>
+    <h1>[NOME PROGETTO]<span class="gt">.</span></h1>
+    <p class="subtitle">[Una frase che dice cosa fa e per chi] &mdash; tema: <span class="accent">[TEMA]</span></p>
+    <p class="subtitle" style="margin-top:5vh;">Team [nomi] &nbsp;·&nbsp; 14 settembre 2026</p>
+  </section>
+
+  <!-- 2. PROBLEMA -->
+  <section class="slide">
+    <h2>Il problema</h2>
+    <ul>
+      <li>[Chi ha il problema e cosa lo rende difficile oggi]</li>
+      <li>[Perche' e' importante / quante persone tocca]</li>
+      <li>[Cosa non funziona nelle soluzioni attuali]</li>
+    </ul>
+  </section>
+
+  <!-- 3. SOLUZIONE -->
+  <section class="slide">
+    <h2>La nostra soluzione</h2>
+    <p>[Nome progetto] <span class="accent">[verbo]</span> [cosa fa], cosi' che [beneficio concreto].</p>
+    <ul>
+      <li><strong>Semplice:</strong> [come si usa in una frase]</li>
+      <li><strong>Inclusivo:</strong> [come tiene conto dei bisogni delle persone]</li>
+      <li><strong>Concreto:</strong> [il risultato che produce]</li>
+    </ul>
+  </section>
+
+  <!-- 4. DEMO -->
+  <section class="slide">
+    <div class="tag">Demo dal vivo</div>
+    <h1>Vediamola<span class="gt">.</span></h1>
+    <p class="subtitle">[Passa all'app: <span class="accent">http://localhost:8080</span> &mdash; mostra 1 scenario dall'inizio alla fine]</p>
+  </section>
+
+  <!-- 5. COME FUNZIONA -->
+  <section class="slide">
+    <h2>Come funziona</h2>
+    <div class="arch">
+      <div class="box">Browser<small>chat UI</small></div>
+      <span class="gt">&gt;</span>
+      <div class="box">Spring Boot<small>/api/chat</small></div>
+      <span class="gt">&gt;</span>
+      <div class="box">Agente Claude<small>via CLI, sottoscrizione</small></div>
+    </div>
+    <p style="margin-top:4vh;">Architettura a 3 livelli: <span class="accent">app</span> · <span class="accent">agent</span> · <span class="accent">presentazione</span>. L'agente e' definito a parte e caricato a runtime &mdash; niente API key, gira sulla sottoscrizione.</p>
+  </section>
+
+  <!-- 6. IMPATTO -->
+  <section class="slide">
+    <h2>Impatto</h2>
+    <div class="cols">
+      <div>
+        <p class="accent" style="font-size:3.5vw;font-weight:700;">[X]</p>
+        <p>[persone / ore risparmiate / metrica chiave]</p>
+      </div>
+      <div>
+        <p class="accent" style="font-size:3.5vw;font-weight:700;">[Y]</p>
+        <p>[secondo numero d'effetto]</p>
+      </div>
+    </div>
+    <p style="margin-top:4vh;">[Dove puo' arrivare: prossimi passi in una frase]</p>
+  </section>
+
+  <!-- 7. CHIUSURA -->
+  <section class="slide">
+    <div class="tag">Grazie</div>
+    <h1>[NOME PROGETTO]<span class="gt">&gt;</span></h1>
+    <p class="subtitle">[Slogan finale in 5 parole] &mdash; Team [nomi]</p>
+  </section>
+
+</div>
+
+<div class="footer">accenture<span class="gt">&gt;</span> &nbsp;|&nbsp; Hackathon AI</div>
+<div class="counter"><span id="cur">1</span> / <span id="tot">7</span></div>
+<div class="hint">← → per navigare</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  let i = 0;
+  const cur = document.getElementById('cur');
+  const tot = document.getElementById('tot');
+  const progress = document.getElementById('progress');
+  tot.textContent = slides.length;
+
+  function show(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+    cur.textContent = i + 1;
+    progress.style.width = ((i + 1) / slides.length * 100) + '%';
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') show(i + 1);
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') show(i - 1);
+    if (e.key === 'Home') show(0);
+    if (e.key === 'End') show(slides.length - 1);
+  });
+  document.getElementById('deck').addEventListener('click', () => show(i + 1));
+  show(0);
+</script>
+</body>
+</html>
