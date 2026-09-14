@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ah, ecco! — Architettura Tecnica</title>
+<style>
+  :root {
+    --blue: #3B82F6;
+    --green: #10B981;
+    --purple: #8B5CF6;
+    --orange: #F59E0B;
+    --red: #EF4444;
+    --teal: #14B8A6;
+    --dark: #0F172A;
+    --dark2: #1E293B;
+    --dark3: #334155;
+    --text: #F1F5F9;
+    --muted: #94A3B8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--dark);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .deck {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+  }
+
+  .slide {
+    display: none;
+    width: 100%;
+    height: 100vh;
+    padding: 56px 80px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 32px;
+    animation: fadeIn .35s ease;
+  }
+
+  .slide.active { display: flex; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── NAV ── */
+  .nav {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    background: rgba(30,41,59,.8);
+    backdrop-filter: blur(8px);
+    padding: 10px 24px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.08);
+    z-index: 10;
+  }
+
+  .nav button {
+    background: none;
+    border: none;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 18px;
+    padding: 4px 12px;
+    border-radius: 6px;
+    transition: background .15s;
+  }
+
+  .nav button:hover { background: rgba(255,255,255,.1); }
+  .nav .counter { color: var(--muted); font-size: 13px; min-width: 48px; text-align: center; }
+
+  /* ── LABELS ── */
+  .label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .label::before {
+    content: '';
+    display: inline-block;
+    width: 28px; height: 2px;
+    background: var(--blue);
+    border-radius: 2px;
+  }
+
+  /* ── HEADINGS ── */
+  h1 { font-size: 52px; font-weight: 800; line-height: 1.1; }
+  h2 { font-size: 36px; font-weight: 700; line-height: 1.15; }
+
+  .accent { color: var(--blue); }
+  .accent-g { color: var(--green); }
+  .accent-p { color: var(--purple); }
+  .accent-o { color: var(--orange); }
+
+  /* ── CARD GRID ── */
+  .grid { display: grid; gap: 16px; }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+
+  .card {
+    background: var(--dark2);
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 16px;
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .card-icon {
+    font-size: 28px;
+    margin-bottom: 4px;
+  }
+
+  .card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .card p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .card.hi { border-color: rgba(59,130,246,.35); background: rgba(59,130,246,.07); }
+  .card.hg { border-color: rgba(16,185,129,.35); background: rgba(16,185,129,.07); }
+  .card.hp { border-color: rgba(139,92,246,.35); background: rgba(139,92,246,.07); }
+  .card.ho { border-color: rgba(245,158,11,.35); background: rgba(245,158,11,.07); }
+  .card.ht { border-color: rgba(20,184,166,.35); background: rgba(20,184,166,.07); }
+
+  /* ── PIPELINE ── */
+  .pipeline {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    width: 100%;
+  }
+
+  .pipe-step {
+    flex: 1;
+    background: var(--dark2);
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 14px;
+    padding: 20px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+  }
+
+  .pipe-step + .pipe-step { margin-left: 8px; }
+
+  .pipe-step::after {
+    content: '→';
+    position: absolute;
+    right: -18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 18px;
+    z-index: 2;
+  }
+
+  .pipe-step:last-child::after { display: none; }
+
+  .pipe-num {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    color: var(--muted);
+  }
+
+  .pipe-step h4 { font-size: 14px; font-weight: 700; color: var(--text); }
+  .pipe-step p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  .pipe-step.s1 { border-color: rgba(59,130,246,.4); }
+  .pipe-step.s2 { border-color: rgba(139,92,246,.4); }
+  .pipe-step.s3 { border-color: rgba(245,158,11,.4); }
+  .pipe-step.s4 { border-color: rgba(16,185,129,.4); }
+  .pipe-step.s5 { border-color: rgba(20,184,166,.4); }
+
+  /* ── ARCH LAYERS ── */
+  .layers { display: flex; flex-direction: column; gap: 12px; }
+
+  .layer {
+    border-radius: 14px;
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border: 1px solid rgba(255,255,255,.07);
+  }
+
+  .layer-icon { font-size: 26px; flex-shrink: 0; }
+  .layer-title { font-size: 14px; font-weight: 700; min-width: 160px; }
+  .layer-tech { font-size: 13px; color: var(--muted); }
+
+  .badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.07);
+    color: var(--muted);
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  .l-front { background: rgba(59,130,246,.08); border-color: rgba(59,130,246,.3); }
+  .l-back  { background: rgba(16,185,129,.08); border-color: rgba(16,185,129,.3); }
+  .l-ai    { background: rgba(139,92,246,.08); border-color: rgba(139,92,246,.3); }
+  .l-sim   { background: rgba(245,158,11,.08); border-color: rgba(245,158,11,.3); }
+
+  /* ── SLOT GRID ── */
+  .slots { display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; }
+  .slot-box {
+    border-radius: 10px;
+    padding: 10px 8px;
+    text-align: center;
+    font-size: 12px;
+    background: var(--dark2);
+    border: 1px solid rgba(255,255,255,.07);
+  }
+  .slot-box .num { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+  .slot-box .name { font-size: 11px; color: var(--muted); font-weight: 600; }
+  .slot-box.active-slot { border-color: rgba(59,130,246,.5); background: rgba(59,130,246,.1); }
+  .slot-box.warn-slot { border-color: rgba(239,68,68,.4); background: rgba(239,68,68,.08); }
+
+  /* ── PRINCIPLES ── */
+  .principles { display: flex; flex-direction: column; gap: 10px; }
+  .principle {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 14px 20px;
+    background: var(--dark2);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.06);
+  }
+  .principle-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .principle-body { flex: 1; }
+  .principle-body strong { font-size: 14px; font-weight: 700; display: block; margin-bottom: 2px; }
+  .principle-body span { font-size: 13px; color: var(--muted); }
+
+  /* ── DIVIDER ── */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: rgba(255,255,255,.06);
+  }
+
+  /* ── TITLE SLIDE ── */
+  .eyebrow {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--blue);
+  }
+
+  .subtitle {
+    font-size: 20px;
+    color: var(--muted);
+    max-width: 680px;
+    line-height: 1.5;
+  }
+
+  .tags {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+  .tag {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.12);
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ═══════════════════════════════════════════════════════ SLIDE 1 -->
+  <div class="slide active" id="s1">
+    <div class="label">Ah, ecco! — Architettura tecnica</div>
+
+    <h1>Come funziona<br/><span class="accent">sotto il cofano</span></h1>
+
+    <p class="subtitle">
+      Un sistema ibrido che combina <strong>simulazione deterministica</strong> e
+      <strong>intelligenza artificiale generativa</strong> per creare esperienze
+      di apprendimento personalizzate in tempo reale.
+    </p>
+
+    <div class="tags">
+      <span class="tag">Java 21 · Spring Boot</span>
+      <span class="tag">React 19 · TypeScript</span>
+      <span class="tag">Claude / Gemini AI</span>
+      <span class="tag">Zero database</span>
+      <span class="tag">Stateless by design</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ SLIDE 2 -->
+  <div class="slide" id="s2">
+    <div class="label">Architettura a strati</div>
+    <h2>Tre livelli, <span class="accent-g">responsabilità separate</span></h2>
+
+    <div class="layers">
+      <div class="layer l-front">
+        <span class="layer-icon">🖥️</span>
+        <span class="layer-title" style="color:#3B82F6">Frontend</span>
+        <span class="layer-tech">React 19 + TypeScript · animazioni, navigazione, radar chart SVG, gestione stato locale</span>
+        <span class="badge">Vite · port 5173</span>
+      </div>
+
+      <div class="layer l-back">
+        <span class="layer-icon">⚙️</span>
+        <span class="layer-title" style="color:#10B981">Backend — API REST</span>
+        <span class="layer-tech">Spring Boot · orchestrazione agenti AI · validazione output · fallback deterministici</span>
+        <span class="badge">Java 21 · port 8080</span>
+      </div>
+
+      <div class="layer l-ai">
+        <span class="layer-icon">🤖</span>
+        <span class="layer-title" style="color:#8B5CF6">Layer AI — 4 agenti specializzati</span>
+        <span class="layer-tech">Generatore · Regista · Tutor · Valutatore — ognuno con un prompt system dedicato</span>
+        <span class="badge">Claude CLI · Gemini API</span>
+      </div>
+
+      <div class="layer l-sim">
+        <span class="layer-icon">📊</span>
+        <span class="layer-title" style="color:#F59E0B">Simulation Engine</span>
+        <span class="layer-tech">Java puro, nessun LLM — simulazione giorno per giorno, calcolo ResilienceScore 0–100</span>
+        <span class="badge">Deterministico</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ SLIDE 3 -->
+  <div class="slide" id="s3">
+    <div class="label">Pipeline AI — generazione caso</div>
+    <h2>Dal keyword al <span class="accent">caso didattico</span> in 5 passi</h2>
+
+    <div class="pipeline">
+      <div class="pipe-step s1">
+        <span class="pipe-num">01</span>
+        <h4>Input utente</h4>
+        <p>L'utente digita una parola qualsiasi<br/><em>"spread"</em>, <em>"IRPEF"</em>, <em>"vaccino"</em>…</p>
+      </div>
+      <div class="pipe-step s2">
+        <span class="pipe-num">02</span>
+        <h4>Agente Generatore</h4>
+        <p>Prompt di sistema + keyword → LLM produce JSON con 8 slot didattici in italiano</p>
+      </div>
+      <div class="pipe-step s3">
+        <span class="pipe-num">03</span>
+        <h4>Validazione backend</h4>
+        <p>Controllo macrotema (6 domini ammessi), strip markdown, retry su parse error</p>
+      </div>
+      <div class="pipe-step s4">
+        <span class="pipe-num">04</span>
+        <h4>Risposta al frontend</h4>
+        <p>Il caso viene aggiunto allo stato React e l'utente naviga automaticamente al percorso</p>
+      </div>
+      <div class="pipe-step s5">
+        <span class="pipe-num">05</span>
+        <h4>Reveal progressivo</h4>
+        <p>Slot 1→6 sbloccati uno alla volta, poi quiz, poi slot 8. Score salvato nel radar</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="slots">
+      <div class="slot-box"><div class="num">1</div><div class="name">Il fatto vissuto</div></div>
+      <div class="slot-box warn-slot"><div class="num">2</div><div class="name">La trappola</div></div>
+      <div class="slot-box"><div class="num">3</div><div class="name">La spiegazione</div></div>
+      <div class="slot-box"><div class="num">4</div><div class="name">Analogia</div></div>
+      <div class="slot-box"><div class="num">5</div><div class="name">I numeri</div></div>
+      <div class="slot-box"><div class="num">6</div><div class="name">Termine tecnico</div></div>
+      <div class="slot-box active-slot"><div class="num">7</div><div class="name">Check quiz</div></div>
+      <div class="slot-box"><div class="num">8</div><div class="name">Cosa farne</div></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ SLIDE 4 -->
+  <div class="slide" id="s4">
+    <div class="label">Scelte architetturali</div>
+    <h2>Progettato per <span class="accent-p">essere robusto</span><br/>e responsabile</h2>
+
+    <div class="principles">
+      <div class="principle">
+        <span class="principle-icon">🔀</span>
+        <div class="principle-body">
+          <strong>AI intercambiabile con un flag di configurazione</strong>
+          <span>Un'unica proprietà (<code>llm.provider=gemini</code>) sostituisce Claude con Gemini in tutto il sistema — zero modifiche al codice, zero lock-in.</span>
+        </div>
+      </div>
+      <div class="principle">
+        <span class="principle-icon">🛡️</span>
+        <div class="principle-body">
+          <strong>Fail-safe by design — la demo non si rompe mai</strong>
+          <span>Ogni chiamata AI ha un fallback deterministico hardcoded. Se il modello è irraggiungibile, il percorso didattico continua normalmente.</span>
+        </div>
+      </div>
+      <div class="principle">
+        <span class="principle-icon">🚫</span>
+        <div class="principle-body">
+          <strong>No-advice by design — mai un consiglio finanziario</strong>
+          <span>Enforced a tre livelli: prompt di sistema, whitelist controller, vincolo UX sul testo dello slot 8 ("cosa guardare", mai "cosa scegliere").</span>
+        </div>
+      </div>
+      <div class="principle">
+        <span class="principle-icon">🧮</span>
+        <div class="principle-body">
+          <strong>Matematica finanziaria deterministica, mai affidata all'AI</strong>
+          <span>Il Simulation Engine è Java puro: calcoli giornalieri, ResilienceScore, mesi di autonomia. L'AI gestisce solo linguaggio e pedagogia.</span>
+        </div>
+      </div>
+      <div class="principle">
+        <span class="principle-icon">🔒</span>
+        <div class="principle-body">
+          <strong>Zero dati persistiti — privacy by default</strong>
+          <span>Nessun database, nessun login, nessun cookie. Ogni sessione è anonima e i progressi vivono solo in memoria del browser.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /deck -->
+
+<!-- NAV -->
+<div class="nav">
+  <button onclick="go(-1)">←</button>
+  <span class="counter" id="counter">1 / 4</span>
+  <button onclick="go(1)">→</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  let cur = 0;
+
+  function go(delta) {
+    slides[cur].classList.remove('active');
+    cur = (cur + delta + slides.length) % slides.length;
+    slides[cur].classList.add('active');
+    document.getElementById('counter').textContent = `${cur + 1} / ${slides.length}`;
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') go(1);
+    if (e.key === 'ArrowLeft')  go(-1);
+  });
+</script>
+</body>
+</html>
