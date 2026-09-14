@@ -16,7 +16,8 @@ import java.util.Set;
 /**
  * Genera un caso didattico completo (8 slot) a partire da una parola chiave,
  * usando l'agente "generatore" via il provider AI attivo (Gemini o Claude CLI).
- * Fallback deterministico se l'AI non risponde: la feature non si rompe mai.
+ * Se l'AI non risponde ritorna 503 e se l'argomento e' fuori ambito 422:
+ * mai un caso finto al posto di quello richiesto.
  */
 @RestController
 @RequestMapping("/api")
@@ -65,36 +66,5 @@ public class GeneraCasoController {
         ObjectNode n = mapper.createObjectNode();
         n.put("error", messaggio);
         return n;
-    }
-
-    private JsonNode fallback() {
-        try {
-            return mapper.readTree("""
-                {
-                  "macrotema": "finanza",
-                  "concetto": "fondo_emergenza",
-                  "titolo": "La lavatrice che si rompe a fine mese",
-                  "fatto": "Ho 200 euro sul conto e mancano dieci giorni allo stipendio. Stamattina la lavatrice si e' rotta: ripararla costa 300 euro.",
-                  "trappola": "Questo mese non avevo spese strane, i conti tornavano. Ma l'imprevisto non era nei conti, e arriva proprio quando non ho margine.",
-                  "spiegazione": "Le spese impreviste non chiedono permesso. Se vivi al limite tra entrate e uscite, il primo intoppo ti manda sotto. Un piccolo cuscinetto assorbe il colpo.",
-                  "analogia": "E' come la ruota di scorta: non la usi mai per guidare, ma il giorno che buchi ti fa ripartire subito.",
-                  "limite_analogia": "A differenza della ruota, il fondo va ricostruito ogni volta che lo usi.",
-                  "numeri": "Con 200 euro e una spesa da 300 vai a -100. Con 300 da parte, la stessa spesa non tocca il conto: la copri e resti a galla.",
-                  "termine": "Fondo di emergenza",
-                  "definizione": "Somma tenuta da parte apposta per coprire spese impreviste senza indebitarsi.",
-                  "domanda": "Giulia paga tutte le bollette del mese ma non ha nulla da parte. Le si rompe il telefono (250 euro). Cosa le manca?",
-                  "opzioni": [
-                    { "testo": "Guadagna troppo poco in assoluto", "corretta": false },
-                    { "testo": "Un fondo di emergenza per assorbire l'imprevisto", "corretta": true },
-                    { "testo": "Niente, e' solo sfortuna", "corretta": false }
-                  ],
-                  "perche": "La risposta giusta e' il fondo di emergenza: e' una somma tenuta da parte apposta per gli imprevisti. Esempio: se ogni mese metti via anche solo 30 euro, dopo un anno hai 360 euro pronti per il giorno in cui si rompe il telefono, senza andare in rosso.",
-                  "spiegazione_errore": "L'errore tipico e' pensare che sia questione di quanto guadagni o di sfortuna. Non e' cosi: anche chi guadagna bene va in difficolta' se vive senza margine. Esempio: due colleghi con lo stesso stipendio, uno ha 300 euro da parte e l'altro zero; allo stesso imprevisto il primo lo assorbe, il secondo va in rosso.",
-                  "cosa_farne": "Dove lo incontri: a ogni spesa non prevista. Cosa guardare: quanti mesi di spese fisse copriresti con quello che hai da parte."
-                }
-                """);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 }
