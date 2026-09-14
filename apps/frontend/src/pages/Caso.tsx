@@ -16,7 +16,7 @@ const SLOT_LABELS = [
   'I numeri',
   'Il termine tecnico',
   'Mettilo alla prova',
-  'Cosa farne',
+  'Nella vita pratica',
 ];
 
 function computaPunteggio(tentativi: number): number {
