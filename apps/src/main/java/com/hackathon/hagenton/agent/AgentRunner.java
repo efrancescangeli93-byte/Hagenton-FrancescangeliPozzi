@@ -2,22 +2,22 @@ package com.hackathon.hagenton.agent;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hackathon.hagenton.ClaudeService;
+import com.hackathon.hagenton.LlmProvider;
 import org.springframework.stereotype.Service;
 
 /**
- * Esegue un agente definito in ../agent/<nome>.txt: usa quel testo come system prompt,
- * passa l'input a Claude (via CLI, sottoscrizione) e ripulisce/parsa l'output.
+ * Esegue un agente definito in ../agent/<nome>.txt: carica quel testo come istruzioni,
+ * lo unisce all'input e lo manda al provider AI (Claude CLI o API free), poi parsa l'output.
  */
 @Service
 public class AgentRunner {
 
-    private final ClaudeService claude;
+    private final LlmProvider llm;
     private final AgentPrompts prompts;
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public AgentRunner(ClaudeService claude, AgentPrompts prompts) {
-        this.claude = claude;
+    public AgentRunner(LlmProvider llm, AgentPrompts prompts) {
+        this.llm = llm;
         this.prompts = prompts;
     }
 
@@ -25,7 +25,7 @@ public class AgentRunner {
 
     /** Esegue un agente che risponde in JSON. Tollera fence ```json e testo attorno al JSON. */
     public JsonNode runJson(String agent, String input) {
-        String raw = claude.completa(prompts.load(agent) + SEP + input);
+        String raw = llm.completa(prompts.load(agent) + SEP + input);
         String json = extractJson(raw);
         try {
             return mapper.readTree(json);
@@ -36,7 +36,7 @@ public class AgentRunner {
 
     /** Esegue un agente che risponde in testo semplice (es. Narratore). */
     public String runText(String agent, String input) {
-        return claude.completa(prompts.load(agent) + SEP + input).strip();
+        return llm.completa(prompts.load(agent) + SEP + input).strip();
     }
 
     static String stripFences(String s) {

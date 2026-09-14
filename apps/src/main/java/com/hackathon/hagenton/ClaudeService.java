@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * testo viaggia su STDIN.
  */
 @Service
-public class ClaudeService {
+public class ClaudeService implements LlmProvider {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -54,6 +54,7 @@ public class ClaudeService {
      * Esecuzione headless "pura": tutto il testo (istruzioni + input) va su stdin,
      * niente system prompt come argomento. E' il modo robusto per gli agenti.
      */
+    @Override
     public String completa(String stdinPrompt) {
         JsonNode node = esegui(baseCmd(), stdinPrompt);
         return node.path("result").asText("");
