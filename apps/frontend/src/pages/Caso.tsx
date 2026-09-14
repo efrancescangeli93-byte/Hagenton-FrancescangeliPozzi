@@ -242,7 +242,7 @@ export default function CasoPagina() {
 
               {feedbackSbagliato && !feedbackCorretto && (
                 <div className="quiz-feedback sbagliato">
-                  {caso.slot2Trappola}
+                  {caso.spiegazioneErrore || caso.slot2Trappola}
                 </div>
               )}
 

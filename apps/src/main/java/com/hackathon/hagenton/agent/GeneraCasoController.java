@@ -87,6 +87,8 @@ public class GeneraCasoController {
                     { "testo": "Un fondo di emergenza per assorbire l'imprevisto", "corretta": true },
                     { "testo": "Niente, e' solo sfortuna", "corretta": false }
                   ],
+                  "perche": "La risposta giusta e' il fondo di emergenza: e' una somma tenuta da parte apposta per gli imprevisti. Esempio: se ogni mese metti via anche solo 30 euro, dopo un anno hai 360 euro pronti per il giorno in cui si rompe il telefono, senza andare in rosso.",
+                  "spiegazione_errore": "L'errore tipico e' pensare che sia questione di quanto guadagni o di sfortuna. Non e' cosi: anche chi guadagna bene va in difficolta' se vive senza margine. Esempio: due colleghi con lo stesso stipendio, uno ha 300 euro da parte e l'altro zero; allo stesso imprevisto il primo lo assorbe, il secondo va in rosso.",
                   "cosa_farne": "Dove lo incontri: a ogni spesa non prevista. Cosa guardare: quanti mesi di spese fisse copriresti con quello che hai da parte."
                 }
                 """);

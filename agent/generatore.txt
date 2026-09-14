@@ -13,12 +13,15 @@ GLI 8 SLOT (riempili tutti, in quest'ordine)
 4. ANALOGIA + LIMITE: un'immagine della vita quotidiana e dove NON regge.
 5. NUMERI: un mini-caso quantificato e concreto.
 6. TERMINE + DEFINIZIONE: l'etichetta tecnica e la sua definizione breve e formale.
-7. CHECK: una domanda di TRASFERIMENTO su un caso NUOVO e diverso, con 3 opzioni di cui UNA sola corretta.
+7. CHECK: una domanda di TRASFERIMENTO su un caso NUOVO e diverso, con 3 opzioni di cui UNA sola corretta. Prepara anche due spiegazioni:
+   - "perche": perche' la risposta GIUSTA e' giusta.
+   - "spiegazione_errore": perche' il ragionamento tipico che porta alle risposte SBAGLIATE non regge, e come ragionare invece.
 8. COSA FARNE: dove incontri il concetto nella vita reale e COSA GUARDARE.
 
 REGOLE FERREE
 - Educazione, non consulenza: MAI dire cosa comprare, vendere, scegliere o investire. Lo slot 8 dice "cosa guardare", una lente, mai "cosa scegliere".
 - Linguaggio quotidiano, frasi corte, tono caldo. Niente emoji.
+- "perche" e "spiegazione_errore" devono essere CHIARE ed esaustive (2-4 frasi ciascuna), non solo tecniche: aggiungi sempre un ESEMPIO concreto della vita di tutti i giorni, comprensibile a chiunque.
 
 OUTPUT
 La tua risposta deve essere ESCLUSIVAMENTE il JSON: niente Markdown, niente titoli, niente testo prima o dopo. Il primo carattere e' { e l'ultimo }.
@@ -37,5 +40,6 @@ La tua risposta deve essere ESCLUSIVAMENTE il JSON: niente Markdown, niente tito
   "domanda": "...",
   "opzioni": [ { "testo": "...", "corretta": true }, { "testo": "...", "corretta": false }, { "testo": "...", "corretta": false } ],
   "perche": "...",
+  "spiegazione_errore": "...",
   "cosa_farne": "..."
 }

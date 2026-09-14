@@ -29,6 +29,7 @@ export type Caso = {
   slot7Domanda: string;
   slot7Opzioni: { testo: string; corretta: boolean }[];
   slot7Perche: string;
+  spiegazioneErrore?: string;
   slot8CosaFarne: string;
   concettoCollegatoId?: string;
   macrotemaId?: string;

@@ -35,6 +35,7 @@ export async function generaCaso(parola: string): Promise<Caso> {
     slot7Domanda: j.domanda || '',
     slot7Opzioni: Array.isArray(j.opzioni) ? j.opzioni : [],
     slot7Perche: j.perche || j.spiegazione || 'Esatto.',
+    spiegazioneErrore: j.spiegazione_errore || undefined,
     slot8CosaFarne: j.cosa_farne || '',
     generato: true,
   };
